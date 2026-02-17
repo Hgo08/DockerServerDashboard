@@ -7,7 +7,8 @@ import threading
 import os
 
 # Cargar variables de entorno
-load_dotenv('/var/www/pruebapython/.env')
+# Pon el path de tu .env
+load_dotenv('/var/www/ProyectoIntermodular/.env')
 
 app = Flask(__name__, template_folder='templates')
 app.secret_key = os.environ.get('SECRET_KEY')
@@ -17,7 +18,7 @@ PASSWORD = os.environ.get('PASSWORD_ADMIN')
 
 # Verificar que las variables existen
 if not app.secret_key or not USUARIO or not PASSWORD:
-    raise RuntimeError("Error al cargar las varibles de entorno .env")
+    raise RuntimeError("Error al cargar las varibles de entorno .env, comprueba el path si existen las variables")
 
 # ── Decorador para proteger rutas ─────────────────────────────
 
