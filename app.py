@@ -9,7 +9,7 @@ import os
 # Cargar variables de entorno
 load_dotenv('/var/www/pruebapython/.env')
 
-app = Flask(__name__, template_folder='/var/www/pruebapython/templates')
+app = Flask(__name__, template_folder='templates')
 app.secret_key = os.environ.get('SECRET_KEY')
 
 USUARIO = os.environ.get('USUARIO_ADMIN')
@@ -17,7 +17,7 @@ PASSWORD = os.environ.get('PASSWORD_ADMIN')
 
 # Verificar que las variables existen
 if not app.secret_key or not USUARIO or not PASSWORD:
-    raise RuntimeError("Faltan variables de entorno en .env")
+    raise RuntimeError("Error al cargar las varibles de entorno .env")
 
 # ── Decorador para proteger rutas ─────────────────────────────
 
@@ -36,7 +36,7 @@ def login():
     if request.method == 'POST':
         if request.form['usuario'] == USUARIO and request.form['password'] == PASSWORD:
             session['logged_in'] = True
-            return redirect(url_for('index'))
+            return redirect(url_for('monitor'))
         else:
             error = 'Credenciales incorrectas'
     return render_template('login.html', error=error)
@@ -47,14 +47,10 @@ def logout():
     return redirect(url_for('login'))
 
 # ── Rutas protegidas ──────────────────────────────────────────
-@app.route('/monitor')
-def monitor():
-    return render_template('monitor.html')
-
 @app.route('/')
 @login_required
-def index():
-    return render_template('index.html')
+def monitor():
+    return render_template('monitor.html')
 
 @app.route('/otra-pagina')
 @login_required                         # Solo tienes que añadir este decorador
