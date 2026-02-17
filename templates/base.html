@@ -282,7 +282,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="{{ url_for('services') }}" class="menu-link {% if request.endpoint == 'servicios' %}active{% endif %}">
+                <a href="{{ url_for('services') }}" class="menu-link {% if request.endpoint == 'services' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-server"></i></span>
                     <span class="menu-text">Servicios</span>
                 </a>
@@ -321,6 +321,25 @@
     <main class="main-content">
         {% block content %}{% endblock %}
     </main>
+
+    <!-- Script para que la barra lateral no se cierre al cambiar de página si está abierta -->
+    <script>
+        // Restaurar el estado de la sidebar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const savedState = localStorage.getItem('sidebarOpen');
+            
+            // Si estaba abierta, marcar el checkbox
+            if (savedState === 'true') {
+                sidebarToggle.checked = true;
+            }
+            
+            // Guardar el estado cada vez que cambie
+            sidebarToggle.addEventListener('change', function() {
+                localStorage.setItem('sidebarOpen', this.checked);
+            });
+        });
+    </script>
 
     {% block extra_js %}{% endblock %}
 </body>
