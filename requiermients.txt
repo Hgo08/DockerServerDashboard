@@ -1,1 +1,1 @@
-flask psutil 
+flask psutil python-dotenv

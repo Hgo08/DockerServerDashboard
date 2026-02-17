@@ -1,18 +1,25 @@
 from flask import Flask, render_template, Response, redirect, url_for, session, request
+from dotenv import load_dotenv
+from functools import wraps
 import time
 import json
 import threading
 import os
 
-app = Flask(__name__, template_folder='/var/www/pruebapython/templates')
-app.secret_key = 'cambia_esto_por_algo_seguro_y_largo'  # Necesario para sesiones
+# Cargar variables de entorno
+load_dotenv('/var/www/pruebapython/.env')
 
-# Credenciales (en producción esto iría en .env o base de datos)
-USUARIO = 'admin'
-PASSWORD = 'tu_password'
+app = Flask(__name__, template_folder='/var/www/pruebapython/templates')
+app.secret_key = os.environ.get('SECRET_KEY')
+
+USUARIO = os.environ.get('USUARIO_ADMIN')
+PASSWORD = os.environ.get('PASSWORD_ADMIN')
+
+# Verificar que las variables existen
+if not app.secret_key or not USUARIO or not PASSWORD:
+    raise RuntimeError("Faltan variables de entorno en .env")
 
 # ── Decorador para proteger rutas ─────────────────────────────
-from functools import wraps
 
 def login_required(f):
     @wraps(f)
@@ -43,7 +50,7 @@ def logout():
 @app.route('/monitor')
 def monitor():
     return render_template('monitor.html')
-    
+
 @app.route('/')
 @login_required
 def index():
