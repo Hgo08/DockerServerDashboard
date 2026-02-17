@@ -49,9 +49,35 @@ def logout():
 
 # ── Rutas protegidas ──────────────────────────────────────────
 @app.route('/')
+@app.route('/monitor')
 @login_required
 def monitor():
     return render_template('monitor.html')
+
+@app.route('/logs')
+@login_required
+def logs():
+    return render_template('logs.html')
+
+@app.route('/services')
+@login_required
+def servicios():
+    return render_template('services.html')
+
+@app.route('/pages')
+@login_required
+def pages():
+    return render_template('pages.html')
+
+@app.route('/users')
+@login_required
+def users():
+    return render_template('users.html')
+
+@app.route('/settings')
+@login_required
+def settings():
+    return render_template('settings.html')
 
 @app.route('/otra-pagina')
 @login_required                         # Solo tienes que añadir este decorador
