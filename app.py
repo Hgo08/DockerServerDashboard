@@ -40,6 +40,10 @@ def logout():
     return redirect(url_for('login'))
 
 # ── Rutas protegidas ──────────────────────────────────────────
+@app.route('/monitor')
+def monitor():
+    return render_template('monitor.html')
+    
 @app.route('/')
 @login_required
 def index():
