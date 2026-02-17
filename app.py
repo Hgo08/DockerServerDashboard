@@ -61,7 +61,7 @@ def logs():
 
 @app.route('/services')
 @login_required
-def servicios():
+def services():
     return render_template('services.html')
 
 @app.route('/pages')
