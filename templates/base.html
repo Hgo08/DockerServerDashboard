@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidebar Desplegable - Solo CSS</title>
+    <title>{% block title %}Mi Aplicación{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
        * {
@@ -222,32 +222,27 @@
         line-height: 1.6;
     }
     
-    /* Responsive - Mantener la barra visible pero ajustar el comportamiento */
+    /* Responsive */
     @media (max-width: 768px) {
-        /* La barra sigue siendo 60px por defecto */
         .sidebar {
             width: 60px;
         }
         
-        /* Cuando se expande en móvil, se superpone */
         #sidebar-toggle:checked ~ .sidebar {
             width: 260px;
             box-shadow: 2px 0 10px rgba(0,0,0,0.3);
         }
         
-        /* El contenido principal ocupa todo menos los 60px de la barra */
         .main-content {
             margin-left: 60px;
             padding: 20px;
         }
         
-        /* Cuando la barra se expande en móvil, el contenido no se mueve */
         #sidebar-toggle:checked ~ .main-content {
             margin-left: 60px;
         }
     }
     
-    /* Para pantallas muy pequeñas (menos de 480px) */
     @media (max-width: 480px) {
         .main-content {
             padding: 15px;
@@ -257,6 +252,8 @@
             font-size: 24px;
         }
     }
+
+    {% block extra_css %}{% endblock %}
     </style>
 </head>
 <body>
@@ -265,46 +262,39 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-        <!-- Header con toggle y logo -->
         <div class="sidebar-header">
             <label for="sidebar-toggle" class="toggle-btn">
                 <i class="fas fa-bars"></i>
             </label>
-            <!-- <div class="logo-container">
-                <div class="logo">M</div>
-                <span class="site-name">Mi Sitio</span>
-            </div> -->
         </div>
 
-        <!-- Menú de navegación -->
         <ul class="sidebar-menu">
             <li class="menu-item">
-                <a href="monitor" class="menu-link active">
+                <a href="{{ url_for('monitor') }}" class="menu-link {% if request.endpoint == 'monitor' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
                     <span class="menu-text">Monitor</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="logs" class="menu-link">
+                <a href="{{ url_for('logs') }}" class="menu-link {% if request.endpoint == 'logs' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
                     <span class="menu-text">Logs</span>
-                    <!-- <span class="badge">5</span> -->
                 </a>
             </li>
             <li class="menu-item">
-                <a href="services" class="menu-link">
+                <a href="{{ url_for('services') }}" class="menu-link {% if request.endpoint == 'servicios' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-server"></i></span>
-                    <span class="menu-text"> Servicios</span>
+                    <span class="menu-text">Servicios</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="pages" class="menu-link">
+                <a href="{{ url_for('pages') }}" class="menu-link {% if request.endpoint == 'pages' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-copy"></i></span>
                     <span class="menu-text">Páginas</span>
                 </a>
             </li>            
             <li class="menu-item">
-                <a href="users" class="menu-link">
+                <a href="{{ url_for('users') }}" class="menu-link {% if request.endpoint == 'users' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-users"></i></span>
                     <span class="menu-text">Usuarios</span>
                 </a>
@@ -313,13 +303,13 @@
             <li class="menu-separator"></li>
 
             <li class="menu-item">
-                <a href="settings" class="menu-link">
+                <a href="{{ url_for('settings') }}" class="menu-link {% if request.endpoint == 'settings' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-cog"></i></span>
                     <span class="menu-text">Ajustes</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="logout" class="menu-link">
+                <a href="{{ url_for('logout') }}" class="menu-link">
                     <span class="menu-icon"><i class="fas fa-right-from-bracket"></i></span>
                     <span class="menu-text">Log Out</span>
                 </a>
@@ -329,7 +319,9 @@
 
     <!-- Contenido principal -->
     <main class="main-content">
-        <h1>Pagina de monitor</h1>
+        {% block content %}{% endblock %}
     </main>
+
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
