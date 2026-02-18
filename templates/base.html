@@ -357,9 +357,11 @@
                 localStorage.setItem('sidebarOpen', this.checked);
             });
         });
+    </script>
 
-        const eventSource = new EventSource('monitor-stream');
+    {% block extra_js %}{% endblock %}
 
+    <script>
         eventSource.onerror = function(error) {
             document.querySelector('.status').innerHTML = '🔴 Desconectado';
             document.querySelector('.status').style.color = '#e74c3c';
@@ -370,7 +372,5 @@
             document.querySelector('.status').style.color = '#27ae60';
         };
     </script>
-
-    {% block extra_js %}{% endblock %}
 </body>
 </html>
