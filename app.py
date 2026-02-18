@@ -8,7 +8,7 @@ import os
 
 # Cargar variables de entorno
 # Pon el path de tu .env
-load_dotenv('/var/www/ProyectoIntermodular/.env')
+#load_dotenv('/var/www/ProyectoIntermodular/.env')
 
 app = Flask(__name__, template_folder='templates')
 app.secret_key = os.environ.get('SECRET_KEY')
@@ -78,11 +78,6 @@ def users():
 @login_required
 def settings():
     return render_template('settings.html')
-
-@app.route('/otra-pagina')
-@login_required                         # Solo tienes que añadir este decorador
-def otra_pagina():
-    return render_template('otra.html')
 
 @app.route('/stream')
 @login_required
