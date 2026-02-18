@@ -84,8 +84,6 @@ def stream():
             with datos._lock:
                 datos_actuales = {
                     'contador': datos.contador,
-                    'temperatura': datos.temperatura,
-                    'usuarios': datos.usuarios,
                     'timestamp': datos.timestamp,
                     'cpu': datos.cpu
                 }
@@ -102,10 +100,9 @@ def stream():
 class DatosGlobales:
     def __init__(self):
         self.contador = 0
-        self.temperatura = 20
-        self.usuarios = 0
         self.timestamp = time.strftime('%H:%M:%S')
         self.cpu = 0
+
         self._lock = threading.Lock()
 
 datos = DatosGlobales()
@@ -114,10 +111,9 @@ def actualizar_datos():
     while True:
         with datos._lock:
             datos.contador += 1
-            datos.temperatura = 20 + (datos.contador % 10)
-            datos.usuarios = 5 + (datos.contador % 3)
             datos.timestamp = time.strftime('%H:%M:%S')
             datos.cpu = psutil.cpu_percent()
+
         time.sleep(1)
 
 hilo_actualizacion = threading.Thread(target=actualizar_datos, daemon=True)

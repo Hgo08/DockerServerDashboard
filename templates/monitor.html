@@ -41,8 +41,6 @@
             const datos = JSON.parse(event.data);
 
             document.getElementById('contador').textContent = datos.contador;
-            document.getElementById('temperatura').textContent = datos.temperatura;
-            document.getElementById('usuarios').textContent = datos.usuarios;
             document.getElementById('timestamp').textContent = datos.timestamp;
             document.getElementById('cpu').textContent = datos.cpu;
         };
