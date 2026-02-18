@@ -42,7 +42,7 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
-# ── Rutas protegidas ──────────────────────────────────────────
+# ── Rutas ──────────────────────────────────────────
 @app.route('/')
 @app.route('/monitor')
 @login_required
@@ -74,7 +74,9 @@ def users():
 def settings():
     return render_template('settings.html')
 
-@app.route('/stream')
+# ── Stream ──────────────────────────────────────────
+
+@app.route('/monitor-stream')
 @login_required
 def stream():
     def generar_eventos():
@@ -84,7 +86,8 @@ def stream():
                     'contador': datos.contador,
                     'temperatura': datos.temperatura,
                     'usuarios': datos.usuarios,
-                    'timestamp': datos.timestamp
+                    'timestamp': datos.timestamp,
+                    'cpu': datos.cpu
                 }
             yield f"data: {json.dumps(datos_actuales)}\n\n"
             time.sleep(1)
@@ -102,6 +105,7 @@ class DatosGlobales:
         self.temperatura = 20
         self.usuarios = 0
         self.timestamp = time.strftime('%H:%M:%S')
+        self.cpu = 0
         self._lock = threading.Lock()
 
 datos = DatosGlobales()
@@ -113,7 +117,8 @@ def actualizar_datos():
             datos.temperatura = 20 + (datos.contador % 10)
             datos.usuarios = 5 + (datos.contador % 3)
             datos.timestamp = time.strftime('%H:%M:%S')
-        time.sleep(0.1)
+            datos.cpu = psutil.cpu_percent()
+        time.sleep(1)
 
 hilo_actualizacion = threading.Thread(target=actualizar_datos, daemon=True)
 hilo_actualizacion.start()

@@ -22,8 +22,8 @@
     </div>
     
     <div class="card">
-        <div class="label">Usuarios Online</div>
-        <div class="valor" id="usuarios">0</div>
+        <div class="label">CPU</div>
+        <div class="valor" id="cpu">0</div>
     </div>
     
     <div class="card">
@@ -44,6 +44,7 @@
             document.getElementById('temperatura').textContent = datos.temperatura;
             document.getElementById('usuarios').textContent = datos.usuarios;
             document.getElementById('timestamp').textContent = datos.timestamp;
+            document.getElementById('cpu').textContent = datos.cpu;
         };
 
         eventSource.onerror = function(error) {
