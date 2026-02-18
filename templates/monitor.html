@@ -35,23 +35,12 @@
 
 {% block extra_js %}
     <script>
-        const eventSource = new EventSource('monitor-stream');
         eventSource.onmessage = function(event) {
             const datos = JSON.parse(event.data);
 
             document.getElementById('contador').textContent = datos.contador;
             document.getElementById('timestamp').textContent = datos.timestamp;
             document.getElementById('cpu').textContent = datos.cpu;
-        };
-
-        eventSource.onerror = function(error) {
-            document.querySelector('.status').innerHTML = '🔴 Desconectado';
-            document.querySelector('.status').style.color = '#e74c3c';
-        };
-
-        eventSource.onopen = function() {
-            document.querySelector('.status').innerHTML = '🟢 Conectado';
-            document.querySelector('.status').style.color = '#27ae60';
         };
     </script>
 
