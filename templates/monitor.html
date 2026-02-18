@@ -36,7 +36,7 @@
 
 {% block extra_js %}
     <script>
-        const eventSource = new EventSource('stream');
+        const eventSource = new EventSource('monitor-stream');
         eventSource.onmessage = function(event) {
             const datos = JSON.parse(event.data);
 
