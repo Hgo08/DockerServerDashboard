@@ -1,14 +1,9 @@
 from flask import Flask, render_template, Response, redirect, url_for, session, request
-from dotenv import load_dotenv
 from functools import wraps
 import time
 import json
 import threading
 import os
-
-# Cargar variables de entorno
-# Pon el path de tu .env
-#load_dotenv('/var/www/ProyectoIntermodular/.env')
 
 app = Flask(__name__, template_folder='templates')
 app.secret_key = os.environ.get('SECRET_KEY')
