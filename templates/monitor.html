@@ -5,8 +5,37 @@
 {% block content %}
 <h1>Página de monitor</h1>
 
+<h1>Dashboard Sincronizado</h1>
+<p class="status">🟢 Conectado</p>
+
 <div class="card">
     <h2>Estado del Sistema</h2>
     <p>Contenido específico del monitor aquí...</p>
 </div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    const eventSource = new EventSource('/stream');
+    
+    eventSource.onmessage = function(event) {
+        const datos = JSON.parse(event.data);
+        
+        document.getElementById('contador').textContent = datos.contador;
+        document.getElementById('temperatura').textContent = datos.temperatura;
+        document.getElementById('usuarios').textContent = datos.usuarios;
+        document.getElementById('timestamp').textContent = datos.timestamp;
+    };
+    
+    eventSource.onerror = function(error) {
+        document.querySelector('.status').innerHTML = '🔴 Desconectado';
+        document.querySelector('.status').style.color = '#e74c3c';
+    };
+    
+    eventSource.onopen = function() {
+        document.querySelector('.status').innerHTML = '🟢 Conectado';
+        document.querySelector('.status').style.color = '#27ae60';
+    };
+    
 {% endblock %}
