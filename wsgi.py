@@ -1,8 +1,9 @@
 import sys
 import os
-from dotenv import load_dotenv
 
-# sys.path.insert(0, '/var/www/tu_app')
+# 1. Añadir la ruta de la app al path de Python
+sys.path.insert(0, '.')
+
 # load_dotenv('/var/www/tu_app/.env')
 
 # activate_this = '/var/www/tu_app/venv/bin/activate_this.py'

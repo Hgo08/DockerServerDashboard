@@ -9,4 +9,41 @@
     <h2>Estado del Sistema</h2>
     <p>Contenido específico del monitor aquí...</p>
 </div>
+    <div class="card">
+        <div class="label">Contador</div>
+        <div class="valor" id="contador">0</div>
+    </div>
+    
+    <div class="card">
+        <div class="label">Temperatura</div>
+        <div class="valor" id="temperatura">0</div>
+        <div class="label">°C</div>
+    </div>
+    
+    <div class="card">
+        <div class="label">CPU</div>
+        <div class="valor" id="cpu">0</div>
+        <div class="label">%</div>
+    </div>
+    
+    <div class="card">
+        <div class="label">Hora</div>
+        <div class="valor" id="timestamp" style="font-size: 32px;">--:--:--</div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        const eventSource = new EventSource('monitor-stream');
+
+        eventSource.onmessage = function(event) {
+            const datos = JSON.parse(event.data);
+
+            document.getElementById('contador').textContent = datos.contador;
+            document.getElementById('timestamp').textContent = datos.timestamp;
+            document.getElementById('cpu').textContent = datos.cpu;
+        };
+    </script>
+
 {% endblock %}
