@@ -3,8 +3,9 @@ import sys
 from dotenv import load_dotenv
 
 class Config:
-    sys.path.insert(0, '.')
-    load_dotenv('.env')
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    load_dotenv(os.path.join(BASE_DIR, '.env'))
 
     SECRET_KEY = os.environ.get('SECRET_KEY')
     USUARIO_ADMIN = os.environ.get('USUARIO_ADMIN')
