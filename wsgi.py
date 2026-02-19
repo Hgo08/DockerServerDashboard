@@ -3,8 +3,8 @@ import os
 from dotenv import load_dotenv
 
 # 1. Añadir la ruta de la app al path de Python
-sys.path.insert(0, '/var/www/ProyectoIntermodular')
-load_dotenv('/var/www/ProyectoIntermodular/.env')
+sys.path.insert(0, '.')
+load_dotenv('.env')
 
 # load_dotenv('/var/www/tu_app/.env')
 
