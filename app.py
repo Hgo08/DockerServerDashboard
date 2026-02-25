@@ -1,7 +1,7 @@
 from flask import Flask
 from config import Config
 from auth import auth_bp
-from monitor import monitor_bp, streams_bp, iniciar_actualizacion  # ✨ streams_bp
+from monitor import monitor_bp, streams_bp, iniciar_actualizacion
 
 def create_app():
     app = Flask(__name__, template_folder='templates')
