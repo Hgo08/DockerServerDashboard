@@ -17,7 +17,6 @@
     padding: 0 24px;
   }
 
-  /* Header */
   .mon-header {
     display: flex;
     align-items: center;
@@ -43,28 +42,17 @@
     color: #4a5568;
   }
 
-  .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #38a169;
-    box-shadow: 0 0 6px #38a169;
-    animation: blink 2s ease-in-out infinite;
-  }
-
   @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
   }
 
-  /* Timestamp */
   .mon-time {
     font-size: 11px;
     letter-spacing: 0.15em;
     color: #2d3748;
   }
 
-  /* Grid de métricas */
   .metrics {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -103,7 +91,6 @@
     margin-left: 4px;
   }
 
-  /* Barra de progreso */
   .m-bar {
     margin-top: 24px;
     height: 2px;
@@ -117,18 +104,15 @@
     width: 0%;
   }
 
-  /* Estados de alerta */
   .warn  .m-value { color: #ecc94b; }
   .warn  .m-fill  { background: #ecc94b; }
   .crit  .m-value { color: #fc8181; }
   .crit  .m-fill  { background: #fc8181; }
 
-  /* Temperatura tiene su propio acento */
   .metric-temp .m-fill { background: #68d391; }
   .metric-temp.warn .m-fill { background: #f6ad55; }
   .metric-temp.crit .m-fill { background: #fc8181; }
 
-  /* Footer */
   .mon-footer {
     margin-top: 2px;
     padding: 18px 40px;
@@ -156,15 +140,10 @@
 
   <div class="mon-header">
     <span class="mon-title">Monitor del sistema</span>
-    <div class="mon-live">
-      <div class="dot"></div>
-      en vivo
-    </div>
   </div>
 
   <div class="metrics">
 
-    <!-- Temperatura -->
     <div class="metric metric-temp" id="card-temp">
       <div class="m-label">Temperatura</div>
       <div>
@@ -174,7 +153,6 @@
       <div class="m-bar"><div class="m-fill" id="bar-temp"></div></div>
     </div>
 
-    <!-- CPU -->
     <div class="metric metric-cpu" id="card-cpu">
       <div class="m-label">Uso CPU</div>
       <div>
@@ -184,7 +162,6 @@
       <div class="m-bar"><div class="m-fill" id="bar-cpu"></div></div>
     </div>
 
-    <!-- RAM -->
     <div class="metric metric-ram" id="card-ram">
       <div class="m-label">Uso RAM</div>
       <div>
@@ -194,7 +171,6 @@
       <div class="m-bar"><div class="m-fill" id="bar-ram"></div></div>
     </div>
 
-    <!-- Red -->
     <div class="metric metric-net" id="card-net">
       <div class="m-label">Uso Red</div>
       <div>
@@ -212,30 +188,4 @@
   </div>
 
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-  function setMetric(cardId, valueId, barId, value, max, warnAt, critAt) {
-    const card = document.getElementById(cardId);
-    document.getElementById(valueId).textContent = value ?? '—';
-    document.getElementById(barId).style.width = Math.min((value / max) * 100, 100) + '%';
-    card.classList.remove('warn', 'crit');
-    if (value >= critAt) card.classList.add('crit');
-    else if (value >= warnAt) card.classList.add('warn');
-  }
-
-  const eventSource = new EventSource('monitor-stream');
-
-  eventSource.onmessage = function(event) {
-    const d = JSON.parse(event.data);
-
-    document.getElementById('timestamp').textContent = d.timestamp;
-
-    setMetric('card-temp', 'temperatura', 'bar-temp', d.temperatura, 100, 65, 80);
-    setMetric('card-cpu',  'cpu',         'bar-cpu',  d.cpu,         100, 65, 85);
-    setMetric('card-ram',  'ram',         'bar-ram',  d.ram,         16,  10, 14);
-    setMetric('card-net',  'red',         'bar-red',  d.red,         100, 60, 80);
-  };
-</script>
 {% endblock %}
