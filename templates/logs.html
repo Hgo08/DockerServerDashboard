@@ -156,13 +156,21 @@
   </div>
 
   <div class="log-table" id="log-table">
-    <div class="empty" id="empty-msg">Sin registros aún...</div>
-  </div>
-
-  <div class="mon-footer">
-    <span class="mon-footer-label">registros cargados</span>
-    <span id="log-count">0</span>
+    <pre id="log-info">
+      <div class="empty" id="empty-msg">Sin registros aún...</div>
+    </pre>
   </div>
 
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+        const eventSource = new EventSource('logs-stream');
+
+        eventSource.onmessage = function(event) {
+            const datos = JSON.parse(event.data);
+
+            document.getElementById('log-info').textContent = datos.logs;
+        };
+</script>
 {% endblock %}

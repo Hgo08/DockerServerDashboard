@@ -1,7 +1,12 @@
 from flask import Flask
 from config import Config
 from auth import auth_bp
+<<<<<<< HEAD
 from monitor import monitor_bp, streams_bp, iniciar_actualizacion
+=======
+from monitor import monitor_bp, streams_bp, iniciar_logs, iniciar_resources
+
+>>>>>>> bf040b2 (logs backend)
 
 def create_app():
     app = Flask(__name__, template_folder='templates')
@@ -17,7 +22,8 @@ def create_app():
     app.register_blueprint(streams_bp)
     
     # Iniciar actualización de datos
-    iniciar_actualizacion()
+    iniciar_logs()
+    iniciar_resources()
     
     return app
 
