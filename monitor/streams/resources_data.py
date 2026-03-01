@@ -26,13 +26,13 @@ class DatosGlobales:
             }
 
 # Instancia global
-datos = DatosGlobales()
+datos_recursos = DatosGlobales()
 
 def iniciar_actualizacion():
     """Inicia el hilo de actualización de datos"""
     def actualizar_datos():
         while True:
-            datos.actualizar()
+            datos_recursos.actualizar()
             time.sleep(1)
     
     hilo = threading.Thread(target=actualizar_datos, daemon=True)

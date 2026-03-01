@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, Response
 import json
 import time
 from decorators import login_required
-from .streams.data_manager import datos
+from .streams.resources_data import datos_recursos
 
 monitor_bp = Blueprint('monitor', __name__)
 
