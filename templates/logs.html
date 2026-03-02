@@ -166,11 +166,21 @@
 {% block extra_js %}
 <script>
         const eventSource = new EventSource('logs-stream');
+        const logContainer = document.getElementById('log-info')
+        let todasLasLineas = [];
 
         eventSource.onmessage = function(event) {
             const datos = JSON.parse(event.data);
+            if (datos.logs){
+              const nuevas = datos.logs
+              todasLasLineas.push(...nuevas);
 
-            document.getElementById('log-info').textContent = document.getElementById('log-info').textContent+datos.logs;
+              logContainer.innerText = todasLasLineas;
+              // Auto-scroll al final
+              logContainer.scrollTop = logContainer.scrollHeight;
+
+            }
         };
+
 </script>
 {% endblock %}
