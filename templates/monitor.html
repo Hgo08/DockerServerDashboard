@@ -192,26 +192,41 @@
 
 {% block extra_js %}
 <script>
-  function setMetric(cardId, valueId, barId, value, max, warnAt, critAt) {
+  //funcion simple para poner los valores del stream en el html usando IDs
+  function setMetric(cardId, valueId, barId, value, max, warnAtPercent, critAtPercent) {
+    //guarda en card el contenedor del valor buscandolo por la ID
     const card = document.getElementById(cardId);
+    //cambia su contenido 
     document.getElementById(valueId).textContent = value ?? '—';
-    document.getElementById(barId).style.width = Math.min((value / max) * 100, 100) + '%';
+    //calcular el porcentaje del valor actual comparado al máximo
+    var percent = Math.min((value / max) * 100, 100)
+    //cambia el ancho de la barra al porcentaje del valor actual
+    document.getElementById(barId).style.width = percent + '%';
+    //quita del contenedor las clases warn y crit
     card.classList.remove('warn', 'crit');
-    if (value >= critAt) card.classList.add('crit');
-    else if (value >= warnAt) card.classList.add('warn');
+    //si el valor supero el porcentaje critico añadir la etiqueta crit para poner el valor en rojo
+    //si no llega a critico pero llega al valor de emergencia, se le añade la clase warn para ponerlo en amarillo
+    if (percent >= critAtPercent) card.classList.add('crit');
+    else if (percent >= warnAtPercent) card.classList.add('warn');
   }
 
+  //crea un event source desde la ruta monitor-stream
   const eventSource = new EventSource('monitor-stream');
 
+  //cuando el event source devuelva algun mensaje
   eventSource.onmessage = function(event) {
-    const d = JSON.parse(event.data);
 
-    document.getElementById('timestamp').textContent = d.timestamp;
+    //guardar los datos del stream (eventdata) como json
+    const data = JSON.parse(event.data);
 
-    setMetric('card-temp', 'temperatura', 'bar-temp', d.temperatura, 100, 65, 80);
-    setMetric('card-cpu',  'cpu',         'bar-cpu',  d.cpu,         100, 65, 85);
-    setMetric('card-ram',  'ram',         'bar-ram',  d.ram,         16,  10, 14);
-    setMetric('card-net',  'red',         'bar-red',  d.red,         100, 60, 80);
+    //busca por elemento 'timestamp' y le pone el texto del json
+    document.getElementById('timestamp').textContent = data.timestamp;
+
+    //usando la setMetric, asigna cada metrica al html, especificando los valores max/warn/crit
+    setMetric('card-temp', 'temperatura', 'bar-temp', data.temperatura, 100, 65, 80);
+    setMetric('card-cpu',  'cpu',         'bar-cpu',  data.cpu,         100, 65, 90);
+    setMetric('card-ram',  'ram',         'bar-ram',  data.ram,         16,  65, 90);
+    setMetric('card-net',  'red',         'bar-red',  data.red,         100, 60, 80);
   };
 </script>
 {% endblock %}
