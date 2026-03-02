@@ -170,7 +170,7 @@
         eventSource.onmessage = function(event) {
             const datos = JSON.parse(event.data);
 
-            document.getElementById('log-info').textContent = datos.logs;
+            document.getElementById('log-info').textContent = document.getElementById('log-info').textContent+datos.logs;
         };
 </script>
 {% endblock %}
