@@ -15,6 +15,7 @@ class DatosGlobales:
             return
         with self._lock:
             with open(self.ruta_log, "r") as f:
+                self.lineas = [] 
                 f.seek(self.ultima_posicion)       # Solo lee desde donde quedó
                 nuevas = f.readlines()
                 self.ultima_posicion = f.tell()    # Guarda la posición actual
