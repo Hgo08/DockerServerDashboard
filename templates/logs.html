@@ -1,12 +1,176 @@
 {% extends "base.html" %}
-
-{% block title %}Logs - Mi Aplicación{% endblock %}
+{% block title %}Logs{% endblock %}
 
 {% block content %}
-<h1>Logs del Sistema</h1>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&display=swap');
 
-<div class="card">
-    <h2>Registros Recientes</h2>
-    <p>Aquí van los logs...</p>
+  body {
+    background: #0f1117 !important;
+    color: #c8d0dc;
+  }
+
+  .mon {
+    font-family: 'DM Mono', monospace;
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 24px;
+  }
+
+  /* Header */
+  .mon-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 52px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #1e2430;
+  }
+
+  .mon-title {
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #4a5568;
+  }
+
+  .mon-live {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #4a5568;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #38a169;
+    box-shadow: 0 0 6px #38a169;
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Tabla de logs */
+  .log-table {
+    background: #13181f;
+  }
+
+  .log-row {
+    display: grid;
+    grid-template-columns: 140px 60px 1fr;
+    align-items: center;
+    padding: 14px 32px;
+    border-bottom: 1px solid #1a2030;
+    transition: background 0.15s;
+    animation: fadeIn 0.3s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .log-row:hover { background: #161c25; }
+  .log-row:last-child { border-bottom: none; }
+
+  .log-time {
+    font-size: 11px;
+    color: #2d3748;
+    letter-spacing: 0.05em;
+  }
+
+  .log-badge {
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    padding: 3px 8px;
+    text-transform: uppercase;
+    width: fit-content;
+  }
+
+  .badge-info  { background: #1a3a2a; color: #68d391; }
+  .badge-warn  { background: #3a2e0a; color: #ecc94b; }
+  .badge-error { background: #3a1a1a; color: #fc8181; }
+  .badge-debug { background: #1a2a3a; color: #63b3ed; }
+
+  .log-msg {
+    font-size: 12px;
+    color: #8896a8;
+    padding-left: 24px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .log-row:hover .log-msg {
+    white-space: normal;
+    overflow: visible;
+  }
+
+  /* Footer */
+  .mon-footer {
+    margin-top: 2px;
+    padding: 18px 32px;
+    background: #13181f;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mon-footer-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #2d3748;
+  }
+
+  #log-count {
+    font-size: 11px;
+    color: #4a5568;
+  }
+
+  .empty {
+    padding: 60px 32px;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: #2d3748;
+    text-transform: uppercase;
+  }
+</style>
+
+<div class="mon">
+
+  <div class="mon-header">
+    <span class="mon-title">Logs del sistema</span>
+    <div class="mon-live">
+      <div class="dot"></div>
+      en vivo
+    </div>
+  </div>
+
+  <div class="log-table" id="log-table">
+    <pre id="log-info">
+      <div class="empty" id="empty-msg">Sin registros aún...</div>
+    </pre>
+  </div>
+
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+        const eventSource = new EventSource('logs-stream');
+
+        eventSource.onmessage = function(event) {
+            const datos = JSON.parse(event.data);
+
+            document.getElementById('log-info').textContent = datos.logs;
+        };
+</script>
 {% endblock %}
