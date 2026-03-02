@@ -33,7 +33,8 @@ class DatosGlobales:
             }
 
 # Instancia global
-datos_logs = DatosGlobales("C:/Users/Victor/Desktop/log.txt")
+# datos_logs = DatosGlobales("C:/Users/Victor/Desktop/log.txt")
+datos_logs = DatosGlobales("/var/log/apache2/access.log")
 
 def iniciar_actualizacion():
     """Inicia el hilo de actualización de datos"""
