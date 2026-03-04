@@ -2,6 +2,8 @@ import os
 import threading
 import time
 
+max_lineas = 1000
+
 class DatosGlobales:
     def __init__(self, ruta_log):
         self.ruta_log = ruta_log
@@ -15,15 +17,16 @@ class DatosGlobales:
             return
         with self._lock:
             with open(self.ruta_log, "r") as f:
-                f.seek(self.ultima_posicion)       # Solo lee desde donde quedó
+                f.seek(self.ultima_posicion)
                 nuevas = f.readlines()
-                self.ultima_posicion = f.tell()    # Guarda la posición actual
-
+                self.ultima_posicion = f.tell()
             if nuevas:
                 for linea in nuevas:
                     linea_limpia = linea.strip()
                     if linea_limpia != "":
                         self.lineas.append(linea_limpia)
+                if len(self.lineas) > max_lineas:
+                    self.lineas = self.lineas[-max_lineas:]
 
     def obtener_datos(self):
         """Obtiene una copia segura de los datos actuales"""
