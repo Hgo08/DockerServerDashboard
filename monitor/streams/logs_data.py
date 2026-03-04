@@ -36,8 +36,7 @@ class DatosGlobales:
             }
 
 # Instancia global
-datos_logs = DatosGlobales("C:/Users/Victor/Desktop/log.txt")
-
+datos_logs = DatosGlobales("C:\\Users\\Adminlocal\\Desktop\\logs.txt")
 def iniciar_actualizacion():
     """Inicia el hilo de actualización de datos"""
     def actualizar_datos():

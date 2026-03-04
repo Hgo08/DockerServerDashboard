@@ -4,238 +4,114 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Acceso</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --ink: #0d1b2a;
-    --paper: #eef2f7;
-    --gold: #3a7bd5;
-    --gold-light: #5a9bf5;
-    --muted: #7a90a8;
-    --error: #8b2b2b;
-  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background-color: var(--ink);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'DM Mono', monospace;
-    overflow: hidden;
-    position: relative;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 50% at 20% 80%, rgba(58,123,213,0.09) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 60% at 80% 20%, rgba(58,123,213,0.06) 0%, transparent 60%);
-    pointer-events: none;
-  }
-
-  body::after {
-    content: '';
-    position: fixed;
-    inset: -50%;
-    width: 200%;
-    height: 200%;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-    opacity: 0.035;
-    pointer-events: none;
-    animation: grain 8s steps(10) infinite;
-  }
-
-  @keyframes grain {
-    0%, 100% { transform: translate(0,0); }
-    10% { transform: translate(-2%,-2%); }
-    20% { transform: translate(2%,-1%); }
-    30% { transform: translate(-1%,2%); }
-    40% { transform: translate(1%,1%); }
-    50% { transform: translate(-2%,1%); }
-    60% { transform: translate(2%,2%); }
-    70% { transform: translate(-1%,-1%); }
-    80% { transform: translate(1%,-2%); }
-    90% { transform: translate(-2%,2%); }
+    background: #f5f5f5;
+    font-family: Georgia, serif;
+    color: #111;
   }
 
   .card {
-    background: var(--paper);
-    width: 420px;
-    padding: 56px 52px 52px;
-    position: relative;
-    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    opacity: 0;
-    transform: translateY(24px);
+    background: #fff;
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    width: 360px;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.07);
   }
 
-  @keyframes rise {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  }
-
-  .card::after {
-    content: '';
-    position: absolute;
-    bottom: 16px; right: 16px;
-    width: 32px; height: 32px;
-    border-bottom: 1px solid var(--gold);
-    border-right: 1px solid var(--gold);
-    opacity: 0.4;
-  }
-
-  .corner-tl {
-    position: absolute;
-    top: 16px; left: 16px;
-    width: 32px; height: 32px;
-    border-top: 1px solid var(--gold);
-    border-left: 1px solid var(--gold);
-    opacity: 0.4;
-  }
-
-  .header {
-    margin-bottom: 40px;
-  }
+  .corner-tl { display: none; }
 
   .label-tag {
-    font-size: 9px;
-    letter-spacing: 0.35em;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--gold);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-    animation: rise 0.9s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  .label-tag::before, .label-tag::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--gold);
-    opacity: 0.35;
+    color: #999;
+    margin-bottom: 1rem;
   }
 
   h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    font-size: 42px;
-    color: var(--ink);
-    line-height: 1;
-    animation: rise 0.9s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+    font-size: 2rem;
+    font-weight: normal;
+    line-height: 1.2;
+    margin-bottom: 2rem;
   }
 
   h1 em {
     font-style: italic;
-    color: var(--gold);
+    color: #555;
   }
 
   .error-box {
-    background: transparent;
-    border-left: 2px solid var(--error);
-    padding: 10px 14px;
-    margin-bottom: 28px;
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    color: var(--error);
-    animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    background: #fff3f3;
+    color: #c00;
+    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.25rem;
   }
 
   .field {
-    margin-bottom: 24px;
-    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    margin-bottom: 1.25rem;
   }
-
-  .field:nth-child(1) { animation-delay: 0.2s; }
-  .field:nth-child(2) { animation-delay: 0.28s; }
 
   label {
     display: block;
-    font-size: 9px;
-    letter-spacing: 0.3em;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
+    color: #888;
+    margin-bottom: 0.4rem;
   }
 
   input {
     width: 100%;
-    background: transparent;
     border: none;
-    border-bottom: 1px solid #b8c8d8;
-    padding: 10px 0;
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    color: var(--ink);
+    border-bottom: 1px solid #ddd;
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+    font-family: inherit;
     outline: none;
-    transition: border-color 0.3s;
-  }
-
-  input::placeholder { color: #9ab0c4; }
-
-  input:focus {
-    border-bottom-color: var(--gold);
-  }
-
-  .btn {
-    margin-top: 36px;
-    width: 100%;
-    padding: 14px;
-    background: var(--ink);
-    color: var(--paper);
-    border: none;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.3s;
-    animation: rise 0.9s 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  .btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--gold);
-    transform: translateX(-101%);
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .btn:hover::before { transform: translateX(0); }
-  .btn span { position: relative; z-index: 1; }
-
-  .footer {
-    margin-top: 32px;
-    text-align: center;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-    animation: rise 0.9s 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  .footer a {
-    color: var(--gold);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
+    background: transparent;
+    color: #111;
     transition: border-color 0.2s;
   }
 
-  .footer a:hover { border-bottom-color: var(--gold); }
+  input:focus { border-bottom-color: #111; }
+
+  input::placeholder { color: #ccc; }
+
+  .btn {
+    margin-top: 2rem;
+    width: 100%;
+    padding: 0.85rem;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+  }
+
+  .btn:hover { background: #333; }
+
+  .footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.78rem;
+    color: #aaa;
+  }
+
+  .footer a { color: #555; text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
