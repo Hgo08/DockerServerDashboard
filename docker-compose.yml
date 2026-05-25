@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    container_name: app-python
+    restart: always
+    ports:
+      - "5000:5000"
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge
