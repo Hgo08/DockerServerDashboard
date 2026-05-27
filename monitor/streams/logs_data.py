@@ -2,8 +2,6 @@ import os
 import threading
 import time
 
-max_lineas = 1000
-
 class DatosGlobales:
     def __init__(self, ruta_log):
         self.ruta_log = ruta_log
@@ -17,16 +15,16 @@ class DatosGlobales:
             return
         with self._lock:
             with open(self.ruta_log, "r") as f:
-                f.seek(self.ultima_posicion)
+                self.lineas = [] 
+                f.seek(self.ultima_posicion)       # Solo lee desde donde quedó
                 nuevas = f.readlines()
-                self.ultima_posicion = f.tell()
+                self.ultima_posicion = f.tell()    # Guarda la posición actual
+
             if nuevas:
                 for linea in nuevas:
                     linea_limpia = linea.strip()
                     if linea_limpia != "":
                         self.lineas.append(linea_limpia)
-                if len(self.lineas) > max_lineas:
-                    self.lineas = self.lineas[-max_lineas:]
 
     def obtener_datos(self):
         """Obtiene una copia segura de los datos actuales"""
@@ -36,7 +34,9 @@ class DatosGlobales:
             }
 
 # Instancia global
-datos_logs = DatosGlobales("C:\\Users\\Adminlocal\\Desktop\\logs.txt")
+# datos_logs = DatosGlobales("C:/Users/Victor/Desktop/log.txt")
+datos_logs = DatosGlobales("/var/log/apache2/access.log")
+
 def iniciar_actualizacion():
     """Inicia el hilo de actualización de datos"""
     def actualizar_datos():
