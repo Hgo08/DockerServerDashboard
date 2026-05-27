@@ -1,12 +1,226 @@
 {% extends "base.html" %}
-
-{% block title %}Opciones - Mi Aplicación{% endblock %}
+{% block title %}Opciones{% endblock %}
 
 {% block content %}
-<h1>Settings</h1>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&display=swap');
 
-<div class="card">
-    <h2>Opciones twin</h2>
-    <p>Aquí van las opciones...</p>
+  body {
+    background: #0f1117 !important;
+    color: #c8d0dc;
+  }
+
+  .mon {
+    font-family: 'DM Mono', monospace;
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 24px;
+  }
+
+  /* Header */
+  .mon-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 52px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #1e2430;
+  }
+
+  .mon-title {
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #4a5568;
+  }
+
+  .mon-live {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #4a5568;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #38a169;
+    box-shadow: 0 0 6px #38a169;
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Contenedor de Opciones (Mismo fondo oscuro de logs y servicios) */
+  .set-container {
+    background: #13181f;
+    padding: 10px 0;
+  }
+
+  /* Filas de Opciones individuales en formato Grid */
+  .set-row {
+    display: grid;
+    grid-template-columns: 1fr 250px;
+    align-items: center;
+    padding: 24px 32px;
+    border-bottom: 1px solid #1a2030;
+    transition: background 0.15s;
+    animation: fadeIn 0.3s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .set-row:hover { background: #161c25; }
+  .set-row:last-child { border-bottom: none; }
+
+  /* Bloque de texto de los ajustes */
+  .set-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .set-label {
+    font-size: 12px;
+    color: #e2e8f0;
+    font-weight: 400;
+  }
+
+  .set-desc {
+    font-size: 11px;
+    color: #4a5568;
+    max-width: 500px;
+  }
+
+  .set-row:hover .set-desc {
+    color: #8896a8;
+  }
+
+  /* Inputs y selectores estilo consola hacker */
+  .set-input {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: #0f1117;
+    border: 1px solid #1a2030;
+    color: #63b3ed;
+    padding: 8px 12px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .set-input:focus {
+    border-color: #4a5568;
+  }
+
+  /* Selects con flecha integrada */
+  .set-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%234a5568'><polygon points='0,3 10,3 5,8'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+
+  /* Botón Inferior */
+  .set-footer {
+    margin-top: 2px;
+    padding: 20px 32px;
+    background: #13181f;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .set-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    border: 1px solid #1e2430;
+    background: #1a2030;
+    color: #8896a8;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .set-btn:hover {
+    background: #2d3748;
+    color: #68d391;
+    border-color: #1a3a2a;
+    box-shadow: 0 0 6px rgba(104, 211, 145, 0.1);
+  }
+</style>
+
+<div class="mon">
+
+  <div class="mon-header">
+    <span class="mon-title">Configuración del Panel</span>
+    <div class="mon-live">
+      <div class="dot"></div>
+      sistema ok
+    </div>
+  </div>
+
+  <form action="/services" method="POST"> <div class="set-container">
+      
+      <div class="set-row">
+        <div class="set-info">
+          <div class="set-label">Tema de la Interfaz</div>
+          <div class="set-desc">Cambia el aspecto visual del panel del monitor entre el diseño de terminal oscuro o claro.</div>
+        </div>
+        <div>
+          <select class="set-input set-select" name="theme_mode">
+            <option value="dark">Modo Oscuro</option>
+            <option value="light">Modo Claro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="set-row">
+        <div class="set-info">
+          <div class="set-label">Unidades de Temperatura</div>
+          <div class="set-desc">Formato en el que se mostrará la tarjeta térmica del servidor principal.</div>
+        </div>
+        <div>
+          <select class="set-input set-select" name="temp_unit">
+            <option value="C">Celsius (°C)</option>
+            <option value="F">Fahrenheit (°F)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="set-row">
+        <div class="set-info">
+          <div class="set-label">Intervalo de Actualización</div>
+          <div class="set-desc">Frecuencia con la que el stream de datos solicita las métricas de hardware a la máquina.</div>
+        </div>
+        <div>
+          <select class="set-input set-select" name="update_interval">
+            <option value="2">Cada 2 segundos</option>
+            <option value="5">Cada 5 segundos</option>
+            <option value="10">Cada 10 segundos</option>
+            <option value="0">Pausar actualización</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="set-footer">
+      <button type="submit" class="set-btn">Guardar Cambios</button>
+    </div>
+  </form>
+
 </div>
 {% endblock %}
