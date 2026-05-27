@@ -1,4 +1,4 @@
-from flask import Blueprint, Response
+from flask import Blueprint, Response, render_template
 import json
 import time
 from decorators import login_required
@@ -39,3 +39,4 @@ def logs_stream():
     response.headers['Connection'] = 'keep-alive'
 
     return response
+

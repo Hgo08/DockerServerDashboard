@@ -1,12 +1,172 @@
 {% extends "base.html" %}
-
-{% block title %}Servicios - Mi Aplicación{% endblock %}
+{% block title %}Servicios{% endblock %}
 
 {% block content %}
-<h1>Servicios</h1>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&display=swap');
 
-<div class="card">
-    <h2>Estado de Servicios</h2>
-    <p>Aquí van los servicios...</p>
+  body {
+    background: #0f1117 !important;
+    color: #c8d0dc;
+  }
+
+  .mon {
+    font-family: 'DM Mono', monospace;
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 24px;
+  }
+
+  /* Header */
+  .mon-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 52px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #1e2430;
+  }
+
+  .mon-title {
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #4a5568;
+  }
+
+  .mon-live {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #4a5568;
+  }
+
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Contenedor de Servicios (Reutiliza el estilo de la tabla de logs) */
+  .srv-table {
+    background: #13181f;
+  }
+
+  /* Filas de Servicios (Estructura Grid adaptada) */
+  .srv-row {
+    display: grid;
+    /* Columnas: Estado(20px) | Nombre(200px) | Descripción(Libre) | Botón Acción(120px) */
+    grid-template-columns: 30px 200px 1fr 120px;
+    align-items: center;
+    padding: 16px 32px;
+    border-bottom: 1px solid #1a2030;
+    transition: background 0.15s;
+    animation: fadeIn 0.3s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .srv-row:hover { background: #161c25; }
+  .srv-row:last-child { border-bottom: none; }
+
+  /* Indicadores de Estado mini tipo LED */
+  .srv-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .status-online { background: #38a169; box-shadow: 0 0 6px #38a169; }
+  .status-offline { background: #e53e3e; box-shadow: 0 0 6px #e53e3e; }
+
+  .srv-name {
+    font-size: 12px;
+    color: #c8d0dc;
+    font-weight: 400;
+  }
+
+  .srv-desc {
+    font-size: 12px;
+    color: #4a5568;
+    padding-left: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .srv-row:hover .srv-desc {
+    color: #8896a8;
+    white-space: normal;
+  }
+
+  /* Botones de Acción integrados en el diseño */
+  .srv-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border: 1px solid #1e2430;
+    background: #1a2030;
+    color: #8896a8;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .srv-btn:hover {
+    background: #2d3748;
+    color: #fff;
+    border-color: #4a5568;
+  }
+
+  /* Variaciones para los botones según el estado actual */
+  .btn-stop:hover {
+    color: #fc8181;
+    border-color: #3a1a1a;
+  }
+  
+  .btn-start:hover {
+    color: #68d391;
+    border-color: #1a3a2a;
+  }
+</style>
+
+<div class="mon">
+
+  <div class="mon-header">
+    <span class="mon-title">Servicios del sistema</span>
+    <div class="mon-live">
+  </div>
+
+  <div class="srv-table">
+    
+    <div class="srv-row">
+      <div class="srv-status-dot status-online"></div>
+      <div class="srv-name">nginx.service</div>
+      <div class="srv-desc">Servidor Web Inverso / Proxy principal</div>
+      <button class="srv-btn btn-stop">Detener</button>
+    </div>
+
+    <div class="srv-row">
+      <div class="srv-status-dot status-offline"></div>
+      <div class="srv-name">mysql.service</div>
+      <div class="srv-desc">Base de datos relacional del sistema</div>
+      <button class="srv-btn btn-start">Iniciar</button>
+    </div>
+
+    <div class="srv-row">
+      <div class="srv-status-dot status-online"></div>
+      <div class="srv-name">flask-backend.service</div>
+      <div class="srv-desc">Core de la aplicación del monitor intermodular</div>
+      <button class="srv-btn btn-stop">Detener</button>
+    </div>
+
+  </div>
+
 </div>
 {% endblock %}
