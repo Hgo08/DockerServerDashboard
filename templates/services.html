@@ -10,10 +10,11 @@
     color: #c8d0dc;
   }
 
+  /* Contenedor principal ajustado con más margen superior para no chocar con el tema */
   .mon {
     font-family: 'DM Mono', monospace;
     max-width: 900px;
-    margin: 60px auto;
+    margin: 120px auto 60px auto; /* Aumentado a 120px arriba para dar espacio limpio debajo de la barra */
     padding: 0 24px;
   }
 
@@ -43,22 +44,22 @@
     color: #4a5568;
   }
 
-
   @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
   }
 
-  /* Contenedor de Servicios (Reutiliza el estilo de la tabla de logs) */
+  /* Contenedor de Servicios */
   .srv-table {
     background: #13181f;
+    margin-top: 20px;
   }
 
   /* Filas de Servicios (Estructura Grid adaptada) */
   .srv-row {
     display: grid;
-    /* Columnas: Estado(20px) | Nombre(200px) | Descripción(Libre) | Botón Acción(120px) */
-    grid-template-columns: 30px 200px 1fr 120px;
+    /* Columnas: PID | PROCESO | ESTADO | USO CPU */
+    grid-template-columns: 80px 220px 1fr 100px;
     align-items: center;
     padding: 16px 32px;
     border-bottom: 1px solid #1a2030;
@@ -134,36 +135,47 @@
     color: #68d391;
     border-color: #1a3a2a;
   }
+
+  .empty {
+    padding: 32px;
+    text-align: center;
+    color: #4a5568;
+    font-size: 12px;
+  }
 </style>
 
-<div class="srv-table">
-  
-  <div class="srv-row" style="background: #1a2030; font-size: 10px; color: #4a5568; letter-spacing: 0.2em; text-transform: uppercase;">
-    <div>PID</div>
-    <div>PROCESO</div>
-    <div>ESTADO</div>
-    <div style="text-align: right;">USO CPU</div>
-  </div>
+<div class="mon">
 
-  {% for proc in procesos %}
-  <div class="srv-row">
+  <div class="srv-table">
     
-    <div style="font-size: 11px; color: #4a5568;">#{{ proc.pid }}</div>
-    
-    <div class="srv-name">{{ proc.name }}</div>
-    
-    <div class="srv-desc" style="text-transform: uppercase; font-size: 11px;">
-      {{ proc.status }}
-    </div>
-    
-    <div style="text-align: right; font-size: 12px; color: {% if proc.cpu_percent > 50 %}#fc8181{% else %}#63b3ed{% endif %};">
-      {{ proc.cpu_percent }} %
+    <div class="srv-row" style="background: #1a2030; font-size: 10px; color: #4a5568; letter-spacing: 0.2em; text-transform: uppercase;">
+      <div>PID</div>
+      <div>PROCESO</div>
+      <div>ESTADO</div>
+      <div style="text-align: right;">USO CPU</div>
     </div>
 
+    {% for proc in procesos %}
+    <div class="srv-row">
+      
+      <div style="font-size: 11px; color: #4a5568;">#{{ proc.pid }}</div>
+      
+      <div class="srv-name">{{ proc.name }}</div>
+      
+      <div class="srv-desc" style="text-transform: uppercase; font-size: 11px;">
+        {{ proc.status }}
+      </div>
+      
+      <div style="text-align: right; font-size: 12px; color: {% if proc.cpu_percent > 50 %}#fc8181{% else %}#63b3ed{% endif %};">
+        {{ proc.cpu_percent }} %
+      </div>
+
+    </div>
+    {% else %}
+    <div class="empty">No se han detectado procesos activos</div>
+    {% endfor %}
+
   </div>
-  {% else %}
-  <div class="empty">No se han detectado procesos activos</div>
-  {% endfor %}
 
 </div>
 {% endblock %}
