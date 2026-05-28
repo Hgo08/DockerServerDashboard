@@ -1,0 +1,11 @@
+{% for proc in procesos %}
+<tr>
+    <td>{{ proc.pid }}</td>
+    <td>{{ proc.name }}</td>
+    <td>{{ proc.username or 'N/A' }}</td>
+    <td class="fw-bold">{{ proc.cpu_percent }}%</td>
+    <td>
+        <button onclick="matarProceso({{ proc.pid }})" class="btn btn-danger btn-sm">Kill</button>
+    </td>
+</tr>
+{% endfor %}

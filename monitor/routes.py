@@ -12,6 +12,11 @@ monitor_bp = Blueprint('monitor', __name__)
 def monitor():
     return render_template('monitor.html')
 
+@monitor_bp.route('/process')
+@login_required
+def process():
+    return render_template('process.html')
+
 @monitor_bp.route('/logs')
 @login_required
 def logs():

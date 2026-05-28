@@ -1,7 +1,7 @@
 from flask import Flask
 from config import Config
 from auth import auth_bp
-from monitor import monitor_bp, streams_bp, iniciar_logs, iniciar_resources
+from monitor import monitor_bp, streams_bp, iniciar_logs, iniciar_resources, iniciar_process
 
 
 def create_app():
@@ -20,10 +20,11 @@ def create_app():
     # Iniciar actualización de datos
     iniciar_logs()
     iniciar_resources()
+    iniciar_process()
     
     return app
 
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(host='0.0.0.0', debug=False)
