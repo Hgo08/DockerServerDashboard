@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidebar con Cambio de Tema</title>
-    
+    <title>{% block title %}Mi Aplicación{% endblock %}</title>    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -14,11 +13,11 @@
 
         /* Paleta de colores por defecto para el modo oscuro */
         :root {
-            --background-color: #0f1117;
+            --background-color: #1e222b;
             --hover-color: #1f2330;
             --text-color: white;
             --menu-icon-color: white;
-            --main-bg: #1e222b; 
+            --main-bg: #0f1117; 
             --main-text: white;
         }
 
@@ -117,6 +116,23 @@
             gap: 0.5rem;
             height: 100%;
         }
+        
+        
+        /* Alineación forzada del botón de cambio de tema y elementos posteriores hacia el fondo */
+        .theme-link {
+            margin-top: auto; 
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1.5rem;
+            transition: background 0.3s, color 0.3s;
+            overflow: hidden; /* Oculta desbordamientos de texto al contraer la barra */
+            white-space: nowrap; /* Impide que el texto se divida en varias líneas */
+            cursor: pointer;
+        }
 
         /* Estilo base para cada enlace o botón de la barra lateral */
         .menu-link {
@@ -156,15 +172,6 @@
             color: white;
         }
 
-        /* ==========================================================================
-           SECCIÓN INFERIOR DE AJUSTES (BOTONES DE TEMA Y CIERRE DE SESIÓN)
-           ========================================================================== */
-
-        /* Alineación forzada del botón de cambio de tema y elementos posteriores hacia el fondo */
-        .theme-link {
-            margin-top: auto; 
-            border-top: 1px solid rgba(128, 128, 128, 0.2);
-        }
 
         /* ==========================================================================
            ÁREA DE CONTENIDO PRINCIPAL
@@ -182,10 +189,28 @@
         aside.closed ~ main {
             margin-left: 70px;
         }
+        header {
+            z-index: 0;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            padding: 0.45rem 2rem 0.45rem 1.45rem;
+            border-bottom: 2px solid rgb(0, 0, 0);
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
     </style>
 </head>
 <body>
-
+    <header>
+        <div class="right">
+            <div id="btn-theme" style="cursor: pointer; font-size: 1.2rem; color: var(--menu-icon-color);">
+                <i class="fas fa-moon"></i>
+            </div>
+        </div>
+    </header>
     <aside id="sidebar">
         <div class="menu-container" id="btn-toggle">
             <div class="menu">
@@ -206,16 +231,13 @@
                 <span class="menu-text">Servicios</span>
             </a>
 
+            <hr style="margin-top: auto; border: 0; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 0.5rem;">
+
             <a href="{{ url_for('monitor.settings') }}" class="menu-link {% if request.endpoint == 'settings' %}active{% endif %}">
                 <span class="menu-icon"><i class="fas fa-cog"></i></span>
                 <span class="menu-text">Ajustes</span>
             </a>
-
-            <div class="menu-link theme-link" id="btn-theme">
-                <span class="menu-icon"><i class="fas fa-moon"></i></span>
-                <span class="menu-text">Cambiar Tema</span>
-            </div>
-
+            
             <a href="{{ url_for('auth.logout') }}" class="menu-link">
                 <span class="menu-icon"><i class="fas fa-right-from-bracket"></i></span>
                 <span class="menu-text">Log Out</span>
@@ -223,7 +245,9 @@
         </nav>
     </aside>
 
-    <script src="pene.js"></script>
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
 
     <script>
         /* 1. Gestión del despliegue de la barra lateral */
@@ -251,5 +275,6 @@
             }
         });
     </script>
+    {% block extra_js %}{% endblock %}  
 </body>
 </html>

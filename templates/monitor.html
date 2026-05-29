@@ -102,18 +102,14 @@
 
   }
 
-
+  /* CSS modificado para comportarse como tabla */
   .metrics {
-
-    display: grid;
-
-    grid-template-columns: repeat(2, 1fr);
-
-    gap: 2px;
-
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 2px;
   }
 
-
+  /* Convertido para ser compatible con celdas (<td>) */
   .metric {
 
     padding: 36px 40px;
@@ -123,14 +119,11 @@
     position: relative;
 
     transition: background 0.2s;
-
+    width: 50%;
+    vertical-align: top;
   }
 
-
-  .metric:hover {
-    background: #161c25;
-  }
-
+  .metric:hover { background: #161c25; }
 
   .m-label {
 
@@ -283,87 +276,59 @@
   </div>
 
 
-  <div class="metrics">
+  <!-- Contenedor convertido a tabla -->
+  <table class="metrics">
+    <tr>
+      <td class="metric metric-cpu" id="card-cpu">
+        <div class="m-label">Uso CPU</div>
+        <div>
+          <span class="m-value" id="cpu">—</span>
+          <span class="m-unit">%</span>
+        </div>
+        <div class="m-bar"><div class="m-fill" id="bar-cpu"></div></div>
+      </td>
 
+      <td class="metric metric-temp" id="card-temp">
+        <div class="m-label">Temperatura</div>
+        <div>
+          <span class="m-value" id="temperatura">—</span>
+          <span class="m-unit">°C</span>
+        </div>
+        <div class="m-bar"><div class="m-fill" id="bar-temp"></div></div>
+      </td>
+    </tr>
 
-    <div class="metric metric-temp" id="card-temp">
+    <tr>
+      <td colspan="2" class="metric metric-ram" id="card-ram">
+        <div class="m-label">Uso RAM</div>
+        <div>
+          <span class="m-value" id="ram">—</span>
+          <span class="m-unit">GB</span>
+        </div>
+        <div class="m-bar"><div class="m-fill" id="bar-ram"></div></div>
+      </td>
+    </tr>
 
-      <div class="m-label">Temperatura</div>
-
-      <div>
-
-        <span class="m-value" id="temperatura">—</span>
-
-        <span class="m-unit">°C</span>
-
-      </div>
-
-      <div class="m-bar">
-        <div class="m-fill" id="bar-temp"></div>
-      </div>
-
-    </div>
-
-
-    <div class="metric metric-cpu" id="card-cpu">
-
-      <div class="m-label">Uso CPU</div>
-
-      <div>
-
-        <span class="m-value" id="cpu">—</span>
-
-        <span class="m-unit">%</span>
-
-      </div>
-
-      <div class="m-bar">
-        <div class="m-fill" id="bar-cpu"></div>
-      </div>
-
-    </div>
-
-
-    <div class="metric metric-ram" id="card-ram">
-
-      <div class="m-label">Uso RAM</div>
-
-      <div>
-
-        <span class="m-value" id="ram">—</span>
-
-        <span class="m-unit">GB</span>
-
-      </div>
-
-      <div class="m-bar">
-        <div class="m-fill" id="bar-ram"></div>
-      </div>
-
-    </div>
-
-
-    <div class="metric metric-net" id="card-net">
-
-      <div class="m-label">Uso Red</div>
-
-      <div>
-
-        <span class="m-value" id="red">—</span>
-
-        <span class="m-unit">MB/s</span>
-
-      </div>
-
-      <div class="m-bar">
-        <div class="m-fill" id="bar-red"></div>
-      </div>
-
-    </div>
-
-
-  </div>
-
+    <tr>
+      <td class="metric metric-net" id="card-net-down">
+        <div class="m-label">Descarga red</div>
+        <div>
+          <span class="m-value" id="net-down">—2</span>
+          <span class="m-unit">MB/s</span>
+        </div>
+        <div class="m-bar"><div class="m-fill" id="bar-net-down"></div></div>
+      </td>
+      
+      <td class="metric metric-net" id="card-net-up">
+        <div class="m-label">Subida red</div>
+        <div>
+          <span class="m-value" id="net-up">—2</span>
+          <span class="m-unit">MB/s</span>
+        </div>
+        <div class="m-bar"><div class="m-fill" id="bar-net-up"></div></div>
+      </td>
+    </tr>
+  </table>
 
   <div class="mon-footer">
 
@@ -438,16 +403,12 @@
     document.getElementById('timestamp').textContent = data.timestamp;
 
 
-    //usando la setMetric, asigna cada metrica al html, especificando los valores max/warn/crit
-
-    setMetric('card-temp', 'temperatura', 'bar-temp', data.temperatura, 100, 65, 80);
-
-    setMetric('card-cpu', 'cpu', 'bar-cpu', data.cpu, 100, 65, 90);
-
-    setMetric('card-ram', 'ram', 'bar-ram', data.ram, 16, 65, 90);
-
-    setMetric('card-net', 'red', 'bar-red', data.red, 100, 60, 80);
-
+    //usando la funcion setMetric, asigna cada metrica al html, especificando los % max/warn/crit
+    setMetric('card-temp',    'temperatura', 'bar-temp',     data.cpuTemp,                100, 40, 80);
+    setMetric('card-cpu',     'cpu',         'bar-cpu',      data.cpu,                    100, 65, 90);
+    setMetric('card-ram',     'ram',         'bar-ram',      data.usedRam,      data.totalRam, 50, 90);
+    setMetric('card-net-up',  'net-up',      'bar-net-up',   data.netSpeedSent,           15, 60, 80);
+    setMetric('card-net-down','net-down',    'bar-net-down', data.netSpeedRecv,           15, 60, 80);
   };
 
 </script>
