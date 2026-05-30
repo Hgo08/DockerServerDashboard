@@ -1,181 +1,253 @@
 {% extends "base.html" %}
-{% block title %}Servicios{% endblock %}
-
 {% block content %}
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&display=swap');
+/* ==========================================================================
+   ESTILOS GENERALES Y ESTRUCTURA FIJA (FLEXBOX)
+   ========================================================================== */
 
-  body {
-    background: #0f1117 !important;
-    color: #c8d0dc;
-  }
+body {
+    /* Cambiado por tus variables generales */
+    background-color: var(--main-bg) !important;
+    color: var(--main-text);
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.1s ease;
+}
 
-  /* Contenedor principal ajustado con más margen superior para no chocar con el tema */
-  .mon {
-    font-family: 'DM Mono', monospace;
-    max-width: 900px;
-    margin: 120px auto 60px auto; /* Aumentado a 120px arriba para dar espacio limpio debajo de la barra */
-    padding: 0 24px;
-  }
-
-  /* Header */
-  .mon-header {
+/* Distribuye la pantalla en dos: menú lateral quieto y zona de contenido libre */
+.dashboard-layout {
     display: flex;
+    width: 100vw;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex-grow: 1;
+    background-color: var(--main-bg); /* Cambiado por tu variable */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    transition: background-color 0.1s ease;
+}
+/* Aplicamos el retraso/suavizado de 0.1s a la tabla, inputs y botones */
+.table-dark, 
+.table-dark th, 
+.table-dark td, 
+.table-striped>tbody>tr:nth-of-type(odd)>*,
+.form-control#busqueda,
+.btn-sort {
+    transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease !important;
+}
+
+.procesos-container {
+    width: 100%;
+    max-width: 900px;
+}
+
+/* ==========================================================================
+   ELEMENTOS INTERNOS (BUSCADOR, BOTONES Y TABLA)
+   ========================================================================== */
+
+.toolbar-container {
+    display: flex;
+    gap: 15px;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 52px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #1e2430;
-  }
+    flex-wrap: wrap; /* Si no caben en el móvil, baja los botones limpiamente */
+}
 
-  .mon-title {
-    font-size: 11px;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: #4a5568;
-  }
+.form-control#busqueda {
+    /* Usa el fondo de las tarjetas y los bordes con tus variables */
+    background-color: var(--background-color);
+    border: 1px solid var(--main-bg);
+    color: var(--main-text);
+    border-radius: 20px;
+    padding-left: 20px;
+    max-width: 300px;
+    flex-grow: 1;
+}
 
-  .mon-live {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: #4a5568;
-  }
+.form-control#busqueda:focus {
+    /* El focus utiliza tu color azul llamativo para destacar */
+    background-color: var(--hover-color);
+    border-color: var(--hover-text-color);
+    color: var(--main-text);
+    box-shadow: none;
+}
 
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
+.btn-sort {
+    background-color: var(--background-color);
+    border: 1px solid var(--main-bg);
+    color: var(--text-color);
+    opacity: 0.8;
+    border-radius: 20px !important;
+    margin-left: 5px;
+    padding: 5px 15px;
+}
 
-  /* Contenedor de Servicios */
-  .srv-table {
-    background: #13181f;
-    margin-top: 20px;
-  }
+.btn-sort:hover, 
+.btn-sort.active {
+    /* Al activarse utiliza tu color azul personalizado para el fondo */
+    background-color: var(--hover-text-color) !important;
+    border-color: var(--hover-text-color) !important;
+    color: var(--background-color) !important; /* El texto pasa al color de fondo inverso para contrastar */
+    font-weight: bold;
+}
 
-  /* Filas de Servicios (Estructura Grid adaptada) */
-  .srv-row {
-    display: grid;
-    /* Columnas: PID | PROCESO | ESTADO | USO CPU */
-    grid-template-columns: 80px 220px 1fr 100px;
-    align-items: center;
-    padding: 16px 32px;
-    border-bottom: 1px solid #1a2030;
-    transition: background 0.15s;
-    animation: fadeIn 0.3s ease both;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateX(-6px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-
-  .srv-row:hover { background: #161c25; }
-  .srv-row:last-child { border-bottom: none; }
-
-  /* Indicadores de Estado mini tipo LED */
-  .srv-status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-  }
-  .status-online { background: #38a169; box-shadow: 0 0 6px #38a169; }
-  .status-offline { background: #e53e3e; box-shadow: 0 0 6px #e53e3e; }
-
-  .srv-name {
-    font-size: 12px;
-    color: #c8d0dc;
-    font-weight: 400;
-  }
-
-  .srv-desc {
-    font-size: 12px;
-    color: #4a5568;
-    padding-left: 10px;
-    white-space: nowrap;
+/* Adaptación completa de la tabla de Bootstrap usando tus variables */
+.table-dark {
+    background-color: var(--background-color) !important;
+    border-radius: 8px;
     overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    border: 1px solid var(--main-bg);
+}
 
-  .srv-row:hover .srv-desc {
-    color: #8896a8;
-    white-space: normal;
-  }
-
-  /* Botones de Acción integrados en el diseño */
-  .srv-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
+.table-dark th {
+    background-color: var(--hover-color);
+    color: var(--hover-text-color); /* Tu azul para resaltar las cabeceras */
+    font-weight: 600;
     text-transform: uppercase;
-    padding: 6px 12px;
-    border: 1px solid #1e2430;
-    background: #1a2030;
-    color: #8896a8;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.2s;
-  }
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--main-bg);
+}
 
-  .srv-btn:hover {
-    background: #2d3748;
-    color: #fff;
-    border-color: #4a5568;
-  }
+.table-dark td {
+    vertical-align: middle;
+    border-bottom: 1px solid var(--main-bg);
+    padding: 12px;
+    color: var(--main-text);
+}
 
-  /* Variaciones para los botones según el estado actual */
-  .btn-stop:hover {
-    color: #fc8181;
-    border-color: #3a1a1a;
-  }
-  
-  .btn-start:hover {
-    color: #68d391;
-    border-color: #1a3a2a;
-  }
+/* Forzamos que las filas alternas (striped) cojan un color dinámico sutil en modo claro/oscuro */
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+    background-color: var(--hover-color);
+    color: var(--main-text);
+    opacity: 0.95;
+}
 
-  .empty {
-    padding: 32px;
-    text-align: center;
-    color: #4a5568;
-    font-size: 12px;
-  }
+.sort-arrow {
+    margin-left: 5px;
+    font-size: 0.9rem;
+    display: inline-block;
+}
 </style>
 
-<div class="mon">
-
-  <div class="srv-table">
-    
-    <div class="srv-row" style="background: #1a2030; font-size: 10px; color: #4a5568; letter-spacing: 0.2em; text-transform: uppercase;">
-      <div>PID</div>
-      <div>PROCESO</div>
-      <div>ESTADO</div>
-      <div style="text-align: right;">USO CPU</div>
+<div class="container mt-4">
+    <div class="row mb-4 justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div class="toolbar-container">
+                <input type="text" id="busqueda" class="form-control" placeholder="Buscar por nombre o PID...">
+                
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary btn-sort active" data-sort="cpu_percent">CPU</button>
+                    <button type="button" class="btn btn-outline-primary btn-sort" data-sort="memory_percent">RAM</button>
+                    <button type="button" class="btn btn-outline-primary btn-sort" data-sort="pid">PID</button>
+                    <button type="button" class="btn btn-outline-primary btn-sort" data-sort="name_asc" id="btn-nombre">
+                        Nombre <span class="sort-arrow">↓</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    {% for proc in procesos %}
-    <div class="srv-row">
-      
-      <div style="font-size: 11px; color: #4a5568;">#{{ proc.pid }}</div>
-      
-      <div class="srv-name">{{ proc.name }}</div>
-      
-      <div class="srv-desc" style="text-transform: uppercase; font-size: 11px;">
-        {{ proc.status }}
-      </div>
-      
-      <div style="text-align: right; font-size: 12px; color: {% if proc.cpu_percent > 50 %}#fc8181{% else %}#63b3ed{% endif %};">
-        {{ proc.cpu_percent }} %
-      </div>
-
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>PID</th>
+                        <th>Nombre</th>
+                        <th>Usuario</th>
+                        <th>CPU %</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpo-tabla">
+                </tbody>
+            </table>
+        </div>
     </div>
-    {% else %}
-    <div class="empty">No se han detectado procesos activos</div>
-    {% endfor %}
-
-  </div>
-
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Variables globales para recordar el orden activo y la conexión viva
+    let currentSort = 'cpu_percent';
+    let eventSource = null;
+
+    // CONEXIÓN EN VIVO: Abre el canal de datos con el servidor y actualiza la tabla constantemente
+    function conectarSSE() {
+        if (eventSource) {
+            eventSource.close(); // Cierra la conexión anterior si existía
+        }
+
+        const searchTerm = document.getElementById('busqueda').value;
+        // Crea la dirección web incluyendo lo buscado y el orden actual (ej: ?search=python&sort=name_asc)
+        const url = `/process-stream?search=${encodeURIComponent(searchTerm)}&sort=${currentSort}`;
+        
+        eventSource = new EventSource(url);
+
+        // Cuando llegan datos nuevos del servidor, los pinta dentro de la tabla
+        eventSource.onmessage = function(event) {
+            document.getElementById('cuerpo-tabla').innerHTML = event.data;
+        };
+
+        eventSource.onerror = function() {
+            console.error("Error en el stream. Reintentando...");
+            eventSource.close();
+        };
+    }
+
+    // BUSCADOR: Reinicia la conexión para filtrar la lista cada vez que el usuario escribe una letra
+    document.getElementById('busqueda').addEventListener('input', () => {
+        conectarSSE();
+    });
+
+    // BOTONES DE ORDENACIÓN: Controla el comportamiento al pulsar las opciones de filtrado
+    document.querySelectorAll('.btn-sort').forEach(boton => {
+        boton.addEventListener('click', function() {
+            const esBotonNombre = this.id === 'btn-nombre';
+            const arrowSpan = this.querySelector('.sort-arrow');
+
+            // Si se pulsa cualquier botón que NO sea Nombre, reinicia el botón de Nombre al estado inicial (A-Z ↓)
+            if (!esBotonNombre) {
+                const btnNombre = document.getElementById('btn-nombre');
+                btnNombre.setAttribute('data-sort', 'name_asc');
+                btnNombre.querySelector('.sort-arrow').textContent = '↓';
+            }
+
+            // Si se pulsa el botón de Nombre y ya estaba seleccionado, cambia la dirección (A-Z ó Z-A) y gira la flecha
+            if (this.classList.contains('active') && esBotonNombre) {
+                if (currentSort === 'name_asc') {
+                    this.setAttribute('data-sort', 'name_desc');
+                    arrowSpan.textContent = '↑';
+                } else {
+                    this.setAttribute('data-sort', 'name_asc');
+                    arrowSpan.textContent = '↓';
+                }
+            }
+
+            // Cambia el diseño visual para iluminar en azul solo el botón clicado
+            document.querySelectorAll('.btn-sort').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            // Guarda el nuevo criterio de orden y pide los datos actualizados al servidor
+            currentSort = this.getAttribute('data-sort');
+            conectarSSE();
+        });
+    });
+
+    // Arranca la conexión directa la primera vez que se carga la página
+    conectarSSE();
+
+    // BOTÓN DE EMERGENCIA: Envía una orden al servidor para cerrar el programa elegido si el usuario confirma el aviso
+    function matarProceso(pid) {
+        if(confirm(`¿Deseas finalizar el proceso ${pid}?`)) {
+            fetch(`/kill/${pid}`, { method: 'POST' });
+        }
+    }
+</script>
 {% endblock %}

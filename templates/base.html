@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mi Aplicación{% endblock %}</title>    
+    <title>{% block title %}Mi Aplicación{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         /* ==========================================================================
            DEFINICIÓN DE VARIABLES SASS/CSS (ESTILOS COHESIVOS)
@@ -14,10 +15,11 @@
         /* Paleta de colores por defecto para el modo oscuro */
         :root {
             --background-color: #1e222b;
-            --hover-color: #1f2330;
+            --hover-color: #282e3d;
+            --hover-text-color: #52a0e6;
             --text-color: white;
             --menu-icon-color: white;
-            --main-bg: #0f1117; 
+            --main-bg: #0f1117;
             --main-text: white;
         }
 
@@ -25,9 +27,11 @@
         body.light-theme {
             --background-color: #ffffff;
             --hover-color: #f0f2f5;
+            --hover-text-color: #1d4ed8;
+            /* Azul llamativo adaptado para el modo claro */
             --text-color: #1f2937;
             --menu-icon-color: #1f2937;
-            --main-bg: #f4f4f4; 
+            --main-bg: #f4f4f4;
             --main-text: #1f2937;
         }
 
@@ -35,51 +39,42 @@
            ESTILOS ESTRUCTURALES Y RESETEO DE MÁRGENES
            ========================================================================== */
 
-        /* Reseteo general para eliminar márgenes y paddings predeterminados del navegador */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* Configuración del contenedor principal en formato flexible (Flexbox) */
         body {
             font-family: Arial, sans-serif;
             background-color: var(--main-bg);
             color: var(--main-text);
             display: flex;
-            transition: background-color 0.3s; /* Transición fluida al alternar colores */
+            transition: background-color 0.3s;
         }
 
         /* ==========================================================================
-           ESTILOS DE LA BARRA LATERAL (SIDEBAR)
+           BARRA LATERAL (SIDEBAR)
            ========================================================================== */
 
-        /* Estructura base de la barra de navegación lateral */
         aside {
             width: 250px;
             height: 100vh;
             background-color: var(--background-color);
-            position: fixed; /* Mantiene el menú visible durante el desplazamiento vertical */
+            position: fixed;
             top: 0;
             left: 0;
             display: flex;
             flex-direction: column;
-            transition: width 0.3s ease, background-color 0.3s; /* Animación para apertura y cierre */
+            transition: width 0.3s ease, background-color 0.3s;
             z-index: 100;
             border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Estado modificado mediante JavaScript para contraer la barra lateral */
         aside.closed {
             width: 70px;
         }
 
-        /* ==========================================================================
-           BOTÓN DE CONTROL DE LA SIDEBAR (MENÚ HAMBURGUESA)
-           ========================================================================== */
-
-        /* Contenedor del icono de tres líneas */
         .menu-container {
             padding: 1.5rem;
             cursor: pointer;
@@ -87,7 +82,6 @@
             align-items: center;
         }
 
-        /* Dimensiones del icono del menú */
         .menu {
             width: 1.5rem;
             height: 1.1rem;
@@ -96,7 +90,6 @@
             justify-content: space-between;
         }
 
-        /* Estilo individual para cada una de las tres líneas horizontales */
         .menu div {
             width: 100%;
             height: 0.15rem;
@@ -109,18 +102,15 @@
            ELEMENTOS DE NAVEGACIÓN Y BOTONES
            ========================================================================== */
 
-        /* Contenedor vertical para los enlaces del menú */
         .sidebar-menu {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
             height: 100%;
         }
-        
-        
-        /* Alineación forzada del botón de cambio de tema y elementos posteriores hacia el fondo */
+
         .theme-link {
-            margin-top: auto; 
+            margin-top: auto;
             color: var(--text-color);
             text-decoration: none;
             padding: 1rem 1.5rem;
@@ -129,12 +119,11 @@
             align-items: center;
             gap: 1.5rem;
             transition: background 0.3s, color 0.3s;
-            overflow: hidden; /* Oculta desbordamientos de texto al contraer la barra */
-            white-space: nowrap; /* Impide que el texto se divida en varias líneas */
+            overflow: hidden;
+            white-space: nowrap;
             cursor: pointer;
         }
 
-        /* Estilo base para cada enlace o botón de la barra lateral */
         .menu-link {
             color: var(--text-color);
             text-decoration: none;
@@ -143,12 +132,11 @@
             align-items: center;
             gap: 1.5rem;
             transition: background 0.3s, color 0.3s;
-            overflow: hidden; /* Oculta desbordamientos de texto al contraer la barra */
-            white-space: nowrap; /* Impide que el texto se divida en varias líneas */
+            overflow: hidden;
+            white-space: nowrap;
             cursor: pointer;
         }
 
-        /* Espaciado y alineación uniforme para los iconos de FontAwesome */
         .menu-icon {
             font-size: 1.2rem;
             width: 20px;
@@ -156,39 +144,36 @@
             display: inline-block;
         }
 
-        /* Ocultación del texto descriptivo cuando la barra lateral se encuentra contraída */
         aside.closed .menu-text {
             display: none;
         }
 
-        /* Cambio visual interactivo cuando el cursor se posiciona sobre un enlace */
+        /*cambia tanto el fondo como el color del texto e icono a la vez */
         .menu-link:hover {
             background-color: var(--hover-color);
+            color: var(--hover-text-color);
         }
 
-        /* Estilo distintivo para el enlace correspondiente a la página activa actual */
         .menu-link.active {
             background-color: #3b82f6;
             color: white;
         }
 
-
         /* ==========================================================================
            ÁREA DE CONTENIDO PRINCIPAL
            ========================================================================== */
 
-        /* Espacio reservado a la derecha de la barra lateral para la interfaz de la aplicación */
         main {
             margin-left: 250px;
             padding: 2rem;
             width: 100%;
-            transition: margin-left 0.3s ease; /* Desplazamiento sincronizado con la barra lateral */
+            transition: margin-left 0.3s ease;
         }
 
-        /* Reajuste del margen del contenido cuando la barra lateral cambia al estado contraído */
-        aside.closed ~ main {
+        aside.closed~main {
             margin-left: 70px;
         }
+
         header {
             z-index: 0;
             width: 100%;
@@ -203,6 +188,7 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <div class="right">
@@ -221,23 +207,27 @@
         </div>
 
         <nav class="sidebar-menu">
-            <a href="{{ url_for('monitor.monitor') }}" class="menu-link {% if request.endpoint == 'monitor' %}active{% endif %}">
+            <a href="{{ url_for('monitor.monitor') }}"
+                class="menu-link {% if request.endpoint == 'monitor' %}active{% endif %}">
                 <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
                 <span class="menu-text">Monitor</span>
             </a>
 
-            <a href="{{ url_for('monitor.services') }}" class="menu-link {% if request.endpoint == 'services' %}active{% endif %}">
+            <a href="{{ url_for('monitor.services') }}"
+                class="menu-link {% if request.endpoint == 'services' %}active{% endif %}">
                 <span class="menu-icon"><i class="fas fa-server"></i></span>
-                <span class="menu-text">Servicios</span>
+                <span class="menu-text">Procesos</span>
             </a>
 
-            <hr style="margin-top: auto; border: 0; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 0.5rem;">
+            <hr
+                style="margin-top: auto; border: 0; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 0.5rem;">
 
-            <a href="{{ url_for('monitor.settings') }}" class="menu-link {% if request.endpoint == 'settings' %}active{% endif %}">
+            <a href="{{ url_for('monitor.settings') }}"
+                class="menu-link {% if request.endpoint == 'settings' %}active{% endif %}">
                 <span class="menu-icon"><i class="fas fa-cog"></i></span>
                 <span class="menu-text">Ajustes</span>
             </a>
-            
+
             <a href="{{ url_for('auth.logout') }}" class="menu-link">
                 <span class="menu-icon"><i class="fas fa-right-from-bracket"></i></span>
                 <span class="menu-text">Log Out</span>
@@ -250,31 +240,39 @@
     </main>
 
     <script>
-        /* 1. Gestión del despliegue de la barra lateral */
-        const btnToggle = document.getElementById('btn-toggle');
-        const sidebar = document.getElementById('sidebar');
-
-        // Escucha las interacciones del usuario en el botón para alternar el estado físico del menú
-        btnToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('closed');
-        });
-
-        /* 2. Gestión del esquema de color global (Temas) */
+        // 1. COMPROBACIÓN INICIAL: Se ejecuta de inmediato al cargar cualquier página
+        const currentTheme = localStorage.getItem('theme');
         const btnTheme = document.getElementById('btn-theme');
 
-        // Aplica o remueve la clase responsable del modo claro en el nodo principal (body)
-        btnTheme.addEventListener('click', () => {
-            document.body.classList.toggle('light-theme');
-            
-            // Evaluación del estado del DOM para actualizar el icono visual entre el sol y la luna
+        if (currentTheme === 'light') {
+            document.body.classList.add('light-theme');
+        }
+
+        // Aseguramos que el icono empiece con la forma correcta según el tema guardado
+        document.addEventListener("DOMContentLoaded", () => {
             const icono = btnTheme.querySelector('i');
             if (document.body.classList.contains('light-theme')) {
-                icono.className = 'fas fa-sun'; 
+                icono.className = 'fas fa-sun';
             } else {
-                icono.className = 'fas fa-moon'; 
+                icono.className = 'fas fa-moon';
+            }
+        });
+
+        // 2. EL EVENTO CLICK: Guarda la elección del usuario
+        btnTheme.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+
+            const icono = btnTheme.querySelector('i');
+            if (document.body.classList.contains('light-theme')) {
+                icono.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'light'); // Guardamos modo claro
+            } else {
+                icono.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'dark');  // Guardamos modo oscuro
             }
         });
     </script>
-    {% block extra_js %}{% endblock %}  
+    {% block extra_js %}{% endblock %}
 </body>
+
 </html>
