@@ -240,6 +240,13 @@
     </main>
 
     <script>
+        // COMPROBACIÓN DEL SIDEBAR: Se ejecuta de inmediato antes de pintar la web para evitar parpadeos
+        const sidebarState = localStorage.getItem('sidebar');
+        const sidebar = document.getElementById('sidebar');
+        if (sidebarState === 'closed') {
+            sidebar.classList.add('closed');
+        }
+
         // 1. COMPROBACIÓN INICIAL: Se ejecuta de inmediato al cargar cualquier página
         const currentTheme = localStorage.getItem('theme');
         const btnTheme = document.getElementById('btn-theme');
@@ -256,6 +263,19 @@
             } else {
                 icono.className = 'fas fa-moon';
             }
+
+            // EVENTO CLICK DEL SIDEBAR (HAMBURGUESA)
+            const btnToggle = document.getElementById('btn-toggle');
+            btnToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('closed');
+                
+                // Guardar la preferencia en el localStorage
+                if (sidebar.classList.contains('closed')) {
+                    localStorage.setItem('sidebar', 'closed');
+                } else {
+                    localStorage.setItem('sidebar', 'opened');
+                }
+            });
         });
 
         // 2. EL EVENTO CLICK: Guarda la elección del usuario
