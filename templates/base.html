@@ -8,170 +8,300 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* ==========================================================================
-           DEFINICIÓN DE VARIABLES SASS/CSS (ESTILOS COHESIVOS)
-           ========================================================================== */
 
-        /* Paleta de colores por defecto para el modo oscuro */
-        :root {
-            --background-color: #1e222b;
-            --hover-color: #282e3d;
-            --hover-text-color: #52a0e6;
-            --text-color: white;
-            --menu-icon-color: white;
-            --main-bg: #0f1117;
-            --main-text: white;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        /* Paleta de colores alternativa que se aplica al activar el modo claro */
-        body.light-theme {
-            --background-color: #ffffff;
-            --hover-color: #f0f2f5;
-            --hover-text-color: #1d4ed8;
-            /* Azul llamativo adaptado para el modo claro */
-            --text-color: #1f2937;
-            --menu-icon-color: #1f2937;
-            --main-bg: #f4f4f4;
-            --main-text: #1f2937;
-        }
+    :root {
+        --color1: #212529;
+        --color2: #343a40;
+        --color3: #495057;
+        --color4: #6c757d;
+        --color5: #adb5bd;
+        --color6: #ced4da;
 
-        /* ==========================================================================
-           ESTILOS ESTRUCTURALES Y RESETEO DE MÁRGENES
-           ========================================================================== */
+        --blue1: #0d1321;
+        --blue2: #1d2d44;
+        --blue3: #3e5c76;
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        --black1: #0a0a0a;
+        --black2: #171717;
+        --black3: #1E1E1E;
+        --black4: #2F2F2F;
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: var(--main-bg);
-            color: var(--main-text);
-            display: flex;
-            transition: background-color 0.3s;
-        }
 
-        /* ==========================================================================
-           BARRA LATERAL (SIDEBAR)
-           ========================================================================== */
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+        background-color: var(--black1);
+    }
+    
+    /* Checkbox oculto que controla el estado */
+    #sidebar-toggle {
+        display: none;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 60px;
+        background-color: var(--black2);
+        transition: width 0.3s ease;
+        overflow: hidden;
+        z-index: 1000;
+    }
+    
+    /* Cuando el checkbox está marcado, expandir */
+    #sidebar-toggle:checked ~ .sidebar {
+        width: 260px;
+    }
+    
+    /* Header del sidebar */
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #3c434a;
+        height: 60px;
+    }
+    
+    /* Label que actúa como botón */
+    .toggle-btn {
+        background: none;
+        border: none;
+        color: #f0f0f1;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+        min-width: 36px;
+    }
+    
+    .toggle-btn:hover {
+        background-color: #3c434a;
+    }
 
-        aside {
-            width: 250px;
-            height: 100vh;
-            background-color: var(--background-color);
-            position: fixed;
-            top: 0;
-            left: 0;
-            display: flex;
-            flex-direction: column;
-            transition: width 0.3s ease, background-color 0.3s;
-            z-index: 100;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-        }
+    /* Needs fix */
+    .container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+        height: 300px;
+        width: auto;
+    }
+    .valor{
+        font-size: 30px;
+        display: block;
+        text-align: center;
+        margin: 0 auto;
+    }
+    
+    .logo-container {
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        white-space: nowrap;
+    }
+    
+    #sidebar-toggle:checked ~ .sidebar .logo-container {
+        opacity: 1;
+    }
+    
+    .logo {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+    }
+    
+    .site-name {
+        margin-left: 12px;
+        color: #f0f0f1;
+        font-size: 16px;
+        font-weight: 600;
+    }
+    .status {
+        margin-left: 20px;
+        color: #f0f0f1;
+        font-size: 16px;
+        font-weight: 600;
+    }
+    
+    /* Menú de navegación */
+    .sidebar-menu {
+        list-style: none;
+        padding: 15px 0;
+    }
+    
+    .menu-item {
+        margin: 2px 0;
+    }
+    
+    .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        color: #f0f0f1;
+        text-decoration: none;
+        transition: all 0.2s;
+        position: relative;
+    }
+    
+    .menu-link:hover {
+        background-color: #3c434a;
+        color: #72afd2;
+    }
+    
+    .menu-link.active {
+        background-color: #2c3338;
+        border-left: 4px solid #2271b1;
+        color: #72afd2;
+    }
+    
+    .menu-icon {
+        min-width: 30px;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .menu-text {
+        margin-left: 15px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        white-space: nowrap;
+    }
+    
+    #sidebar-toggle:checked ~ .sidebar .menu-text {
+        opacity: 1;
+    }
+    
+    /* Contenido principal */
+    .main-content {
+        margin-left: 60px;
+        padding: 30px;
+        transition: margin-left 0.3s ease;
+        min-height: 100vh;
+    }
+    
+    #sidebar-toggle:checked ~ .main-content {
+        margin-left: 260px;
+    }
+    
+    /* Separador de menú */
+    .menu-separator {
+        height: 1px;
+        background-color: #3c434a;
+        margin: 10px 15px;
+    }
+    
+    /* Badge de notificaciones */
+    .badge {
+        background-color: #d63638;
+        color: white;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 10px;
+        margin-left: auto;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+        
+        .container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
 
-        aside.closed {
-            width: 70px;
-        }
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #fff;
+    }
 
-        .menu-container {
-            padding: 1.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
+    .valor {
+        font-size: 2rem;
+        font-weight: bold;
+    }
 
-        .menu {
-            width: 1.5rem;
-            height: 1.1rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+    .label {
+        color: #666;
+        font-size: 0.9rem;
+}
 
-        .menu div {
-            width: 100%;
-            height: 0.15rem;
-            background-color: var(--menu-icon-color);
-            border-radius: 2px;
-            transition: background-color 0.3s;
-        }
+    #sidebar-toggle:checked ~ .sidebar .badge {
+        opacity: 1;
+    }
+    
+    /* Estilos para el contenido */
+    .content-header {
+        margin-bottom: 30px;
+    }
+    
+    .content-header h1 {
+        color: #1d2327;
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+    
+    .content-header p {
+        color: #50575e;
+        font-size: 14px;
+    }
+    
+    .card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
 
-        /* ==========================================================================
-           ELEMENTOS DE NAVEGACIÓN Y BOTONES
-           ========================================================================== */
-
-        .sidebar-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            height: 100%;
-        }
-
-        .theme-link {
-            margin-top: auto;
-            color: var(--text-color);
-            text-decoration: none;
-            padding: 1rem 1.5rem;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 1.5rem;
-            transition: background 0.3s, color 0.3s;
-            overflow: hidden;
-            white-space: nowrap;
-            cursor: pointer;
-        }
-
-        .menu-link {
-            color: var(--text-color);
-            text-decoration: none;
-            padding: 1rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            transition: background 0.3s, color 0.3s;
-            overflow: hidden;
-            white-space: nowrap;
-            cursor: pointer;
-        }
-
-        .menu-icon {
-            font-size: 1.2rem;
-            width: 20px;
-            text-align: center;
-            display: inline-block;
-        }
-
-        aside.closed .menu-text {
-            display: none;
-        }
-
-        /*cambia tanto el fondo como el color del texto e icono a la vez */
-        .menu-link:hover {
-            background-color: var(--hover-color);
-            color: var(--hover-text-color);
-        }
-
-        .menu-link.active {
-            background-color: #3b82f6;
-            color: white;
-        }
-
-        /* ==========================================================================
-           ÁREA DE CONTENIDO PRINCIPAL
-           ========================================================================== */
-
-        main {
-            margin-left: 250px;
-            padding: 2rem;
-            width: 100%;
-            transition: margin-left 0.3s ease;
-        }
-
-        aside.closed~main {
-            margin-left: 70px;
+    }
+    
+    .card h2 {
+        color: #1d2327;
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .card p {
+        color: #50575e;
+        line-height: 1.6;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 60px;
         }
 
         header {

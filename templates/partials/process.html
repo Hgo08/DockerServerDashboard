@@ -1,23 +1,15 @@
 {% for proc in procesos %}
-<tr>
-    <td>{{ proc.pid }}</td>
-    <td>{{ proc.name }}</td>
-    <td>{{ proc.username or 'N/A' }}</td>
-    <td class="fw-bold">{{ proc.cpu_percent }}%</td>
-    <td>
-        <button onclick="matarProceso({{ proc.pid }})" class="btn btn-danger btn-sm">Kill</button>
-    </td>
-</tr>
-{% endfor %}
-<div class="process-row grid-row">
-    <div class="col-pid">43234</div>
-    <div class="col-name">nombre proceso</div>
-    <div class="col-cpu">30%</div>
-    <div class="col-ram">512MB</div>
-    <div class="col-user">root</div>
+<div class="process-row grid-row" data-cpu="30" data-ram="512" data-user="root">
+    <div class="col-pid">{{ proc.pid }}</div>
+    <div class="col-name">{{ proc.name }}</div>
+    <div class="col-cpu">{{ proc.cpu_percent }}%</div>
+    <div class="col-ram">{{ proc.ram }} MB</div>
+    <div class="col-user">{{ proc.username or 'N/A' }}</div>
     <div class="col-actions">
         <button class="action-btn"></button>
         <button class="action-btn"></button>
         <button class="action-btn"></button>
     </div>
 </div>
+{% endfor %}
+
