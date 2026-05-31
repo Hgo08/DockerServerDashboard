@@ -37,11 +37,28 @@ def getAllProcess():
     process = []
 
     #iteramos por los procesos obteniendo solo los datos que usamos
-    for proc in psutil.process_iter(['pid', 'name', 'username', 'cpu_percent', 'memory_percent']):
-
+    for proc in psutil.process_iter(['pid', 'name', 'username', 'cpu_percent', 'memory_info']):
         #intenta meter el proceso a la lista, si da un error de acceso denegado o el proceso no existe, salta al siguiente proceso
         try:
-            process.append(proc.info)
+            process.append({
+                                'pid': proc.info['pid'],
+                                'name': proc.info['name'],
+                                'username': proc.info['username'],
+                                'cpu_percent': proc.info['cpu_percent'],
+                                'ram': bytes2MB(proc.info['memory_info'].rss)
+                            })
+
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             pass
     return process
+
+#convierte de bytes a una unidad legible
+def bytes2Human(bytes):
+    actual = bytes
+    #mientras que la unidad acutal sea mayor a 1024, la pasamos a la siguiente unidad (bytes -> KB)
+    while actual > 1024:
+        actual = actual / 1024
+    
+    #cuando ya no sea mayor, devuelve
+def bytes2MB(bytes):
+    return round(bytes / 1048576, 2)

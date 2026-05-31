@@ -47,6 +47,7 @@ def process_stream():
     #obtenemos los parametros de la URL, si no existen se usa por defecto el segundo valor ('' y 'cpu_percent)
     search = request.args.get('search', '').lower()
     sort_by = request.args.get('sort', 'cpu_percent')
+    inverted = request.args.get('inverted', 'false').lower() == 'true'
 
     app = current_app._get_current_object()
 
@@ -72,12 +73,10 @@ def process_stream():
 
                 #poner en orden inverso siempre meno cuando se filtra solo por nombre
                 #si es nombre A-Z, si es CPU/RAM/PID Mayor a menor.
-                is_reverse = True 
-                if sort_by == 'name':
-                    is_reverse = True
+                
 
                 #ordena los procesos filtrados, usando una funcion lambda para ordenarlos por la variable sort_by y que no de error si no tiene valor
-                ordered = sorted(filtred, key=lambda x: x.get(sort_by) if x.get(sort_by) is not None else 0, reverse=is_reverse)
+                ordered = sorted(filtred, key=lambda x: x.get(sort_by) if x.get(sort_by) is not None else 0, reverse=inverted)
 
                 #genera el html de los procesos desde un template pasando como variable la lista de todos los porcesos (limitado a 30)
                 html = render_template('partials/process.html', procesos=ordered[:30])

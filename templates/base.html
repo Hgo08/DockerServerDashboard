@@ -6,15 +6,36 @@
     <title>{% block title %}Mi Aplicación{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-       * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --color1: #212529;
+        --color2: #343a40;
+        --color3: #495057;
+        --color4: #6c757d;
+        --color5: #adb5bd;
+        --color6: #ced4da;
+
+        --blue1: #0d1321;
+        --blue2: #1d2d44;
+        --blue3: #3e5c76;
+
+        --black1: #0a0a0a;
+        --black2: #171717;
+        --black3: #1E1E1E;
+        --black4: #2F2F2F;
+
+
     }
     
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
-        background-color: #f0f0f1;
+        background-color: var(--black1);
     }
     
     /* Checkbox oculto que controla el estado */
@@ -29,7 +50,7 @@
         top: 0;
         height: 100vh;
         width: 60px;
-        background-color: #1d2327;
+        background-color: var(--black2);
         transition: width 0.3s ease;
         overflow: hidden;
         z-index: 1000;
