@@ -14,21 +14,13 @@
     }
 
     :root {
-        --color1: #212529;
-        --color2: #343a40;
-        --color3: #495057;
-        --color4: #6c757d;
-        --color5: #adb5bd;
-        --color6: #ced4da;
-
-        --blue1: #0d1321;
-        --blue2: #1d2d44;
-        --blue3: #3e5c76;
-
         --black1: #0a0a0a;
         --black2: #171717;
         --black3: #1E1E1E;
         --black4: #2F2F2F;
+        --card-bg: #171717;
+        --border-color: #2F2F2F;
+        --body-bg: #0a0a0a;
 
 
     }
@@ -356,9 +348,9 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="{{ url_for('monitor.logs') }}" class="menu-link {% if request.endpoint == 'logs' %}active{% endif %}">
+                <a href="{{ url_for('monitor.process') }}" class="menu-link {% if request.endpoint == 'process' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
-                    <span class="menu-text">Logs</span>
+                    <span class="menu-text">Procesos</span>
                 </a>
             </li>
             <li class="menu-item">
