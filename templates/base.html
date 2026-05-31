@@ -46,6 +46,7 @@
         transition: width 0.3s ease;
         overflow: hidden;
         z-index: 1000;
+        border-right: 1px solid var(--border-color);
     }
     
     /* Cuando el checkbox está marcado, expandir */
@@ -218,7 +219,7 @@
         transition: opacity 0.3s;
     }
         
-        .container {
+    .container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
@@ -349,7 +350,7 @@
             </li>
             <li class="menu-item">
                 <a href="{{ url_for('monitor.process') }}" class="menu-link {% if request.endpoint == 'process' %}active{% endif %}">
-                    <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+                    <span class="menu-icon"><i class="fas fa-tasks"></i></span>
                     <span class="menu-text">Procesos</span>
                 </a>
             </li>

@@ -3,249 +3,311 @@
 
 {% block content %}
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&display=swap');
+    * {
+        color: rgb(250, 250, 250);
+    }
 
-  body {
-    background: #0f1117 !important;
-    color: #c8d0dc;
-  }
+    .monitor-container {
+        max-width: 1200px;
+        /* El límite de ancho ahora es para todo el bloque */
+        margin: 0 auto;
+        /* Centra todo el bloque en la pantalla */
+    }
 
-  .mon {
-    font-family: 'DM Mono', monospace;
-    max-width: 900px;
-    margin: 60px auto;
-    padding: 0 24px;
-  }
+    .main-div {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 15px;
+        /* Ya no necesitas max-width ni margin aquí */
+    }
 
-  .mon-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 52px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #1e2430;
-  }
+    .item {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        padding: 20px;
+        text-align: center;
+    }
 
-  .mon-title {
-    font-size: 11px;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: #4a5568;
-  }
+    .title-container {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 
-  .mon-live {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: #4a5568;
-  }
+    /*  ============================
+    metric card y sus interiores
+    ============================*/
+    .metric-card {
+        border: 1px solid var(--border-color);
+        background-color: var(--black2);
+        border-radius: 10px;
+        padding: 20px;
 
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        height: 200px;
+        /* Altura fija para uniformidad */
+    }
 
-  .mon-time {
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    color: #2d3748;
-  }
+    .metric-card:hover {
+        transform: translateY(-2px);
+    }
 
-  /* CSS modificado para comportarse como tabla */
-  .metrics {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 2px;
-  }
+    .metric-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #72afd2;
+    }
 
-  /* Convertido para ser compatible con celdas (<td>) */
-  .metric {
-    padding: 36px 40px;
-    background: #13181f;
-    position: relative;
-    transition: background 0.2s;
-    width: 50%;
-    vertical-align: top;
-  }
+    /*para que los iconos de los titulos se vean mas grandes y con un espacio al texto*/
+    .metric-header i {
+        margin-right: 10px;
+        font-size: 1.3rem;
+    }
 
-  .metric:hover { background: #161c25; }
+    .metric-body {
+        text-align: center;
+        font-size: 2.2rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
 
-  .m-label {
-    font-size: 9px;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: #4a5568;
-    margin-bottom: 20px;
-  }
+    .double-metric-body {
+        display: flex;
+        justify-content: space-around;
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+        align-self: center;
+        width: 100%;
+        gap: 50px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-  .m-value {
-    font-size: 56px;
-    font-weight: 300;
-    line-height: 1;
-    color: #e2e8f0;
-    font-variant-numeric: tabular-nums;
-    transition: color 0.4s;
-  }
+    .metric-bar {
+        height: 10px;
+        background: #1e2430;
+        border-radius: 10px;
+    }
 
-  .m-unit {
-    font-size: 14px;
-    color: #4a5568;
-    margin-left: 4px;
-  }
+    .metric-bar-fill {
+        border-radius: 10px;
+        background-color: red;
+        height: 100%;
+    }
 
-  .m-bar {
-    margin-top: 24px;
-    height: 2px;
-    background: #1e2430;
-  }
-
-  .m-fill {
-    height: 100%;
-    background: #3a7bd5;
-    transition: width 1s ease, background 0.4s;
-    width: 0%;
-  }
-
-  .warn  .m-value { color: #ecc94b; }
-  .warn  .m-fill  { background: #ecc94b; }
-  .crit  .m-value { color: #fc8181; }
-  .crit  .m-fill  { background: #fc8181; }
-
-  .metric-temp .m-fill { background: #68d391; }
-  .metric-temp.warn .m-fill { background: #f6ad55; }
-  .metric-temp.crit .m-fill { background: #fc8181; }
-
-  .mon-footer {
-    margin-top: 2px;
-    padding: 18px 40px;
-    background: #13181f;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .mon-footer-label {
-    font-size: 9px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: #2d3748;
-  }
-
-  #timestamp {
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: #4a5568;
-  }
+    .chart-container {
+        position: relative;
+        height: 60px;
+        width: 100%;
+    }
 </style>
 
-<div class="mon">
 
-  <div class="mon-header">
-    <span class="mon-title">Monitor del sistema</span>
-  </div>
+<div class="monitor-container">
+    <div class="title-container">
+        <h1 class="title">Monitor de recursos</h1>
+        <h4 id="timestamp">Monitor de recursos</h1>
 
-  <!-- Contenedor convertido a tabla -->
-  <table class="metrics">
-    <tr>
-      <td class="metric metric-cpu" id="card-cpu">
-        <div class="m-label">Uso CPU</div>
-        <div>
-          <span class="m-value" id="cpu">—</span>
-          <span class="m-unit">%</span>
+    </div>
+
+    <div class="main-div">
+        <div class="metric-card" id="card-cpu">
+            <div class="metric-header"><i class="fa-solid fa-microchip"></i>Uso CPU</div>
+            <div class="metric-body"><span id="cpu"></span>%</div>
+            <div class="chart-container">
+                <canvas id="chart-cpu"></canvas>
+            </div>
         </div>
-        <div class="m-bar"><div class="m-fill" id="bar-cpu"></div></div>
-      </td>
-
-      <td class="metric metric-temp" id="card-temp">
-        <div class="m-label">Temperatura</div>
-        <div>
-          <span class="m-value" id="temperatura">—</span>
-          <span class="m-unit">°C</span>
+        <div class="metric-card" id="card-temp">
+            <div class="metric-header"><i class="fa-solid fa-temperature-half"></i> Temperatura</div>
+            <div class="metric-body"><span id="temp"></span>ºC</div>
+            <div class="chart-container">
+                <canvas id="chart-temp"></canvas>
+            </div>
         </div>
-        <div class="m-bar"><div class="m-fill" id="bar-temp"></div></div>
-      </td>
-    </tr>
-
-    <tr>
-      <td colspan="2" class="metric metric-ram" id="card-ram">
-        <div class="m-label">Uso RAM</div>
-        <div>
-          <span class="m-value" id="ram">—</span>
-          <span class="m-unit">GB</span>
+        <div class="metric-card" id="card-ram">
+            <div class="metric-header"><i class="fa-solid fa-memory"></i> Memoria RAM</div>
+            <div class="metric-body"><span id="ram"></span>GB</div>
+            <div class="chart-container">
+                <canvas id="chart-ram"></canvas>
+            </div>
         </div>
-        <div class="m-bar"><div class="m-fill" id="bar-ram"></div></div>
-      </td>
-    </tr>
+        <div class="metric-card" id="card-disk">
+            <div class="metric-header"><i class="fa-solid fa-hard-drive"></i> I/O Disco</div>
+            <div class="double-metric-body">
+                <div>
+                    Read: <span id="disk-read"></span>MB/s
+                </div>
 
-    <tr>
-      <td class="metric metric-net" id="card-net-down">
-        <div class="m-label">Descarga red</div>
-        <div>
-          <span class="m-value" id="net-down">—2</span>
-          <span class="m-unit">MB/s</span>
+                <div>
+                    Write: <span id="disk-write"></span>MB/s
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chart-disk-usage"></canvas>
+            </div>
         </div>
-        <div class="m-bar"><div class="m-fill" id="bar-net-down"></div></div>
-      </td>
-      
-      <td class="metric metric-net" id="card-net-up">
-        <div class="m-label">Subida red</div>
-        <div>
-          <span class="m-value" id="net-up">—2</span>
-          <span class="m-unit">MB/s</span>
+        <div class="metric-card" id="card-net">
+            <div class="metric-header"><i class="fa-solid fa-network-wired"></i> Tráfico de Red</div>
+            <div class="double-metric-body">
+                <div>
+                    <i class="fa-solid fa-download"></i><span id="net-down"></span>MB/s
+                </div>
+                <div>
+                    <i class="fa-solid fa-upload"></i><span id="net-up"></span>MB/s
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chart-net"></canvas>
+            </div>
         </div>
-        <div class="m-bar"><div class="m-fill" id="bar-net-up"></div></div>
-      </td>
-    </tr>
-  </table>
+        <div class="metric-card" id="card-disk">
+            <div class="metric-header"><i class="fa-solid fa-database"></i> Espacio en Disco (/)</div>
+            <div class="metric-body"><span id="diskSpaceUsed"></span>GB</div>
+            <div class="chart-container">
+                <canvas id="chart-disk-space"></canvas>
+            </div>
+        </div>
 
-  <div class="mon-footer">
-    <span class="mon-footer-label">última actualización</span>
-    <span id="timestamp">--:--:--</span>
-  </div>
-
+    </div>
 </div>
 {% endblock %}
-
 {% block extra_js %}
+<!--importar libreria para los gráficos-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  //funcion simple para poner los valores del stream en el html usando IDs
-  function setMetric(cardId, valueId, barId, value, max, warnAtPercent, critAtPercent) {
-    //guarda en card el contenedor del valor buscandolo por la ID
-    const card = document.getElementById(cardId);
-    //cambia su contenido 
-    document.getElementById(valueId).textContent = value ?? '—';
-    //calcular el porcentaje del valor actual comparado al máximo
-    var percent = Math.min((value / max) * 100, 100)
-    //cambia el ancho de la barra al porcentaje del valor actual
-    document.getElementById(barId).style.width = percent + '%';
-    //quita del contenedor las clases warn y crit
-    card.classList.remove('warn', 'crit');
-    //si el valor supero el porcentaje critico añadir la etiqueta crit para poner el valor en rojo
-    //si no llega a critico pero llega al valor de emergencia, se le añade la clase warn para ponerlo en amarillo
-    if (percent >= critAtPercent) card.classList.add('crit');
-    else if (percent >= warnAtPercent) card.classList.add('warn');
-  }
+    const MAX_POINTS = 20; // Cuántos puntos de historia quieres ver
 
-  //crea un event source desde la ruta monitor-stream
-  const eventSource = new EventSource('monitor-stream');
+    // Función para crear una configuración de gráfica rápida (estilo sparkline)
+    function createChartConfig(color) {
+        return {
+            type: 'line',
+            data: {
+                labels: Array(MAX_POINTS).fill(''),
+                datasets: [{
+                    data: Array(MAX_POINTS).fill(0),
+                    borderColor: color,
+                    backgroundColor: color + '33', // Color con transparencia
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { display: false }, y: { display: false, min: 0, max: 100 } },
+                animation: { duration: 0 } // Para que no consuma CPU animando cada segundo
+            }
+        };
+    }
+    // Función para gráficas con dos líneas (Red y Disco)
+    function createDualChartConfig(color1, color2) {
+        return {
+            type: 'line',
+            data: {
+                labels: Array(MAX_POINTS).fill(''),
+                datasets: [
+                    {
+                        label: 'Dato 1',
+                        data: Array(MAX_POINTS).fill(0),
+                        borderColor: color1,
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        fill: false
+                    },
+                    {
+                        label: 'Dato 2',
+                        data: Array(MAX_POINTS).fill(0),
+                        borderColor: color2,
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { display: false, min: 0 } // Sin 'max: 100' porque MB/s puede variar
+                },
+                animation: { duration: 0 }
+            }
+        };
+    }
+    // Inicializamos las gráficas
+    const cpuChart = new Chart(document.getElementById('chart-cpu'), createChartConfig('#72afd2'));
+    const tempChart = new Chart(document.getElementById('chart-temp'), createChartConfig('#e74c3c'));
+    const ramChart = new Chart(document.getElementById('chart-ram'), createChartConfig('#8e44ad'));
+    const diskSpaceChart = new Chart(document.getElementById('chart-disk-space'), createChartConfig('#95a5a6'));
 
-  //cuando el event source devuelva algun mensaje
-  eventSource.onmessage = function(event) {
+    const diskUsageChart = new Chart(document.getElementById('chart-disk-usage'), createDualChartConfig('#2ecc71', '#e74c3c'));
+    const netChart = new Chart(document.getElementById('chart-net'), createDualChartConfig('#3498db', '#9b59b6'));
 
-    //guardar los datos del stream (eventdata) como json
-    const data = JSON.parse(event.data);
+    //función para meter el dato en la gráfica
+    function updateChart(chart, newValue) {
+        chart.data.datasets[0].data.shift();
+        chart.data.datasets[0].data.push(newValue);
+        chart.update();
+    }
+    function updateDualChart(chart, val1, val2) {
+        chart.data.datasets[0].data.shift();
+        chart.data.datasets[0].data.push(val1);
+        chart.data.datasets[1].data.shift();
+        chart.data.datasets[1].data.push(val2);
+        chart.update();
+    }
 
-    //busca por elemento 'timestamp' y le pone el texto del json
-    document.getElementById('timestamp').textContent = data.timestamp;
+    //crea un event source desde la ruta monitor-stream
+    const eventSource = new EventSource('monitor-stream');
 
-    //usando la funcion setMetric, asigna cada metrica al html, especificando los % max/warn/crit
-    setMetric('card-temp',    'temperatura', 'bar-temp',     data.cpuTemp,                100, 40, 80);
-    setMetric('card-cpu',     'cpu',         'bar-cpu',      data.cpu,                    100, 65, 90);
-    setMetric('card-ram',     'ram',         'bar-ram',      data.usedRam,      data.totalRam, 50, 90);
-    setMetric('card-net-up',  'net-up',      'bar-net-up',   data.netSpeedSent,           15, 60, 80);
-    setMetric('card-net-down','net-down',    'bar-net-down', data.netSpeedRecv,           15, 60, 80);
-  };
+    //cuando el event source devuelva algun mensaje
+    eventSource.onmessage = function (event) {
+
+        //guardar los datos del stream (eventdata) como json
+        const data = JSON.parse(event.data);
+
+        document.getElementById('timestamp').textContent = data.timestamp;
+
+        const ramPercent = (data.usedRam / data.totalRam) * 100;
+        updateChart(ramChart, ramPercent);
+
+        updateChart(cpuChart, data.cpu);
+        updateChart(tempChart, data.cpuTemp);
+        updateDualChart(diskUsageChart, data.diskSpeedRead, data.diskSpeedWrite);
+        updateDualChart(netChart, data.netSpeedRecv, data.netSpeedSent);
+
+        const diskUsedPercent = (data.diskSpaceUsed / data.diskSpaceTotal) * 100;
+        updateChart(diskSpaceChart, diskUsedPercent);
+
+        document.getElementById('cpu').textContent = data.cpu;
+        document.getElementById('temp').textContent = data.cpuTemp;
+        document.getElementById('ram').textContent = data.usedRam;
+        document.getElementById('diskSpaceUsed').textContent = data.diskSpaceUsed;
+
+        document.getElementById('disk-read').textContent = data.diskSpeedRead;
+        document.getElementById('disk-write').textContent = data.diskSpeedWrite;
+
+        document.getElementById('net-down').textContent = data.netSpeedRecv;
+        document.getElementById('net-up').textContent = data.netSpeedSent;
+    };
+
 </script>
 {% endblock %}
