@@ -10,6 +10,3 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - USUARIO_ADMIN=${USUARIO_ADMIN}
       - PASSWORD_ADMIN=${PASSWORD_ADMIN}
-
-    volumes:
-      - /:/host:ro
