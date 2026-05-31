@@ -1,50 +1,172 @@
 {% extends "base.html" %}
 {% block content %}
+
 <style>
-    .btn-group {
-        border-radius: 100px;
-        border: 1px solid #16ff0a;
-    }
+* {
+    color: rgb(250, 250, 250);
+}
+.grid-row{
+    display: grid;
+    grid-template-columns: 80px 1fr 100px 100px 100px 100px;
+    align-items: center;
+    gap: 15px;
+}
+.toolbar {
+    padding: 10px;
+    padding-bottom: 20px;
+}
+
+.search-container {
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--black4);
+    border-radius: 20px;
+    padding: 5px 15px;
+    height: 36px;
+}
+.search-input {
+    width: 100%; /* Para que rellene su contenedor flexible */
+    border: none;
+    outline: none;
+    background: none;
+    margin-left: 10px;
+}
+
+.filter-btn {
+    background: none;
+    border: 1px solid var(--black4);
+    border-radius: 15px;
+    padding: 6px 0;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    height: 36px;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+.actions-label{
+    text-align: right;
+}
+.separator{
+    border: none;
+    border-top: 1px solid var(--black4); /* Usando tu variable de borde */
+    /*margin: 0 0 15px 0; /* Ajusta el margen inferior para separarlo de la lista */
+    margin-bottom: 15px;
+    margin-left: -10px;
+    margin-right: -10px;
+}
+.process-list{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.process-row{
+    border-radius: 20px;
+    /*border: 2px solid black;*/
+    padding: 10px;
+}
+.process-card{
+    border: 1px solid var(--black4);
+    background-color: var(--black2);
+    border-radius: 10px;
+    padding: 10px;
+}
+.col-pid {
+    border-right: var(--border-thickness) solid var(--border-color);
+    padding-right: 10px;
+}
+
+.col-cpu, .col-ram, .col-user {
+    text-align: center;
+}
+
+.col-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.action-btn {
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--black4);
+    border-radius: 50%;
+    background: darkred;
+    cursor: pointer;
+}
+.title{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
 </style>
-<div class="container mt-4">
-    <div class="row mb-4 justify-content-center align-items-center g-3">
-        <div class="col-12 col-md-4">
-            <input type="text" id="busqueda" class="form-control" placeholder="Buscar por nombre o PID...">
+<h1 class="title">Procesos</h1>
+<div class="process-card">
+    <div class="toolbar grid-row">
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="search" class="search-input" placeholder="Buscar por nombre o PID...">
         </div>
-        <div class="col-12 col-md-auto text-center">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-primary btn-sort active" data-sort="cpu_percent">CPU</button>
-                <button type="button" class="btn btn-outline-primary btn-sort" data-sort="memory_percent">RAM</button>
-                <button type="button" class="btn btn-outline-primary btn-sort" data-sort="pid">PID</button>
-                <button type="button" class="btn btn-outline-primary btn-sort" data-sort="name">Nombre</button>
+        <button type="button" class="filter-btn active" data-sort="cpu_percent">CPU <span class="sort-arrow"><i class="fa-solid fa-arrow-down"></i></span></button>
+        <button type="button" class="filter-btn" data-sort="ram">RAM <span class="sort-arrow"></span></button>
+        <button type="button" class="filter-btn" data-sort="username">Usuario <span class="sort-arrow"></span></button>
+        <div class="actions-label">Actions</div>
+    </div>
+
+    <hr class="separator">
+
+    <div class="process-list" id="process-list">
+        <div class="process-row grid-row" data-cpu="30" data-ram="512" data-user="root">
+            <div class="col-pid">43234</div>
+            <div class="col-name">nombre proceso</div>
+            <div class="col-cpu">30%</div>
+            <div class="col-ram">512MB</div>
+            <div class="col-user">root</div>
+            <div class="col-actions">
+                <button class="action-btn"></button>
+                <button class="action-btn"></button>
+                <button class="action-btn"></button>
+            </div>
+        </div>
+
+        <div class="process-row grid-row" data-cpu="2" data-ram="2" data-user="hugoc">
+            <div class="col-pid">23123</div>
+            <div class="col-name">python</div>
+            <div class="col-cpu">2%</div>
+            <div class="col-ram">2MB</div>
+            <div class="col-user">hugoc</div>
+            <div class="col-actions">
+                <button class="action-btn"></button>
+                <button class="action-btn"></button>
+                <button class="action-btn"></button>
+            </div>
+        </div>
+
+        <div class="process-row grid-row" data-cpu="0.01" data-ram="8" data-user="dovonsio">
+            <div class="col-pid">23</div>
+            <div class="col-name">h897r239h8fwe</div>
+            <div class="col-cpu">0.01%</div>
+            <div class="col-ram">8MB</div>
+            <div class="col-user">dovonsio</div>
+            <div class="col-actions">
+                <button class="action-btn"></button>
+                <button class="action-btn"></button>
+                <button class="action-btn"></button>
             </div>
         </div>
     </div>
-
-    <div class="row justify-content-center">
-        <div class="col-12 col-lg-10">
-            <table class="table table-dark table-striped">
-                <thead>
-                    <tr>
-                        <th>PID</th>
-                        <th>Nombre</th>
-                        <th>Usuario</th>
-                        <th>CPU %</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="cuerpo-tabla">
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
+
 
 {% endblock %}
 
 {% block extra_js %}
 <script>
     let currentSort = 'cpu_percent';
+    let inverted = true
     let eventSource = null;
 
     function conectarSSE() {
@@ -52,13 +174,15 @@
             eventSource.close();
         }
 
-        const searchTerm = document.getElementById('busqueda').value;
-        const url = `/process-stream?search=${encodeURIComponent(searchTerm)}&sort=${currentSort}`;
+        const searchTerm = document.getElementById('search').value;
+        // Construir URL con parámetros para Python
+        const url = `/process-stream?search=${encodeURIComponent(searchTerm)}&sort=${currentSort}&inverted=${inverted}`;
         
         eventSource = new EventSource(url);
 
         eventSource.onmessage = function(event) {
-            document.getElementById('cuerpo-tabla').innerHTML = event.data;
+            // El servidor nos envía el HTML de los <tr> directamente
+            document.getElementById('process-list').innerHTML = event.data;
         };
 
         eventSource.onerror = function() {
@@ -67,16 +191,38 @@
         };
     }
 
-    document.getElementById('busqueda').addEventListener('input', () => {
+    // Escuchar el buscador
+    document.getElementById('search').addEventListener('input', () => {
         conectarSSE();
     });
 
-    document.querySelectorAll('.btn-sort').forEach(boton => {
+    // Escuchar los botones de ordenación
+    document.querySelectorAll('.filter-btn').forEach(boton => {
         boton.addEventListener('click', function() {
-            document.querySelectorAll('.btn-sort').forEach(b => b.classList.remove('active'));
+            const nuevoSort = this.getAttribute('data-sort');
+            const arrowContainer = this.querySelector('.sort-arrow');
+            // 1. Lógica de cambio de estado
+            if (currentSort === nuevoSort) {
+                // Si clicamos en el mismo, invertimos el sentido
+                inverted = !inverted;
+            } else {
+                // Si clicamos en uno nuevo, reseteamos a descendente (flecha abajo)
+                currentSort = nuevoSort;
+                inverted = true;
+            }
+            
+            //limpiar todos los iconos y clases de otros botones
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('active');
+                b.querySelector('.sort-arrow').innerHTML = '';
+            });
+
             this.classList.add('active');
 
-            currentSort = this.getAttribute('data-sort');
+            const iconClass = inverted ? 'fa-arrow-down' : 'fa-arrow-up';
+            arrowContainer.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+
+            // Cambiar criterio y reconectar
             conectarSSE();
         });
     });
@@ -89,4 +235,5 @@
         }
     }
 </script>
+
 {% endblock %}
