@@ -161,12 +161,13 @@
            ========================================================================== */
         main {
             margin-left: 260px;
-            padding: 90px 30px 30px 30px; /* Margen superior para no dar con el header fijo */
+            padding: 90px 30px 30px 30px;
+            /* Margen superior para no dar con el header fijo */
             width: 100%;
             transition: margin-left 0.3s ease;
         }
 
-        aside.closed ~ main {
+        aside.closed~main {
             margin-left: 60px;
         }
 
@@ -199,7 +200,7 @@
             border-radius: 12px;
             padding: 24px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -224,13 +225,16 @@
             aside {
                 width: 60px;
             }
+
             aside .menu-text {
                 display: none;
             }
+
             main {
                 margin-left: 60px;
             }
-            aside.closed ~ main {
+
+            aside.closed~main {
                 margin-left: 60px;
             }
         }
@@ -245,7 +249,7 @@
             </div>
         </div>
     </header>
-    
+
     <aside id="sidebar">
         <div class="menu-container" id="btn-toggle">
             <div class="menu">
@@ -257,13 +261,13 @@
 
         <nav class="sidebar-menu">
             <a href="{{ url_for('monitor.monitor') }}"
-                class="menu-link {% if request.endpoint == 'monitor' %}active{% endif %}">
+                class="menu-link {% if request.endpoint == 'monitor.monitor' %}active{% endif %}">
                 <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
                 <span class="menu-text">Monitor</span>
             </a>
 
             <a href="{{ url_for('monitor.process') }}"
-                class="menu-link {% if request.endpoint == 'monitor.process' or request.endpoint == 'process' %}active{% endif %}">
+                class="menu-link {% if request.endpoint == 'monitor.process' %}active{% endif %}">
                 <span class="menu-icon"><i class="fas fa-tasks"></i></span>
                 <span class="menu-text">Procesos</span>
             </a>
@@ -271,7 +275,7 @@
             <hr style="margin-top: auto; border: 0; border-top: 1px solid var(--card-border); margin-bottom: 0.5rem;">
 
             <a href="{{ url_for('monitor.settings') }}"
-                class="menu-link {% if request.endpoint == 'settings' %}active{% endif %}">
+                class="menu-link {% if request.endpoint == 'monitor.settings' %}active{% endif %}">
                 <span class="menu-icon"><i class="fas fa-cog"></i></span>
                 <span class="menu-text">Ajustes</span>
             </a>
@@ -316,7 +320,7 @@
             const btnToggle = document.getElementById('btn-toggle');
             btnToggle.addEventListener('click', () => {
                 sidebar.classList.toggle('closed');
-                
+
                 // Guardar la preferencia en el localStorage
                 if (sidebar.classList.contains('closed')) {
                     localStorage.setItem('sidebar', 'closed');
