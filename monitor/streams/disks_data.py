@@ -97,7 +97,8 @@ class DatosGlobales:
                     "temp": device.temperature,    # Ej: 34 (en grados C)
                     "health": device.assessment,   # Ej: PASS 
                     "read_speed": f"{round(read_speed, 2)} MB/s",
-                    "write_speed": f"{round(write_speed, 2)} MB/s"
+                    "write_speed": f"{round(write_speed, 2)} MB/s",
+                    "size": device.capacity if device.capacity else "N/A"
                 })
         except Exception as e:
             print(f"Error al leer SMART: {e}")
@@ -135,3 +136,14 @@ def iniciar_actualizacion():
 
 def bytes2GB(bytes):
     return round(bytes / 1073741824, 2)
+
+def _obtener_tamano_fisico(disk_name):
+        """Lee el tamaño total del disco desde /sys/block en GB"""
+        try:
+            disk_name = os.path.basename(disk_name)
+            # En Linux, 'size' contiene el número de sectores de 512 bytes
+            with open(f"/sys/block/{disk_name}n1/size", "r") as f:
+                sectores = int(f.read().strip())
+                return bytes2GB(sectores * 512)
+        except Exception as e:
+            return e

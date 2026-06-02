@@ -2,9 +2,10 @@
    <div class="grid-row-disks">
         <div>{{ disk.name }}</div>
         <div>{{ disk.model }}</div>
+        <div>{{ disk.write_speed }}</div>
+        <div>{{ disk.read_speed }}</div>
         <div>{{ disk.temp }}</div>
         <div>{{ disk.health }}</div>
-        <div>{{ disk.read_speed }}</div>
-        <div>{{ disk.write_speed }}</div>
+        <div>{{ disk.size }}</div>
     </div>
 {% endfor %}
