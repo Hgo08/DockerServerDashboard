@@ -20,6 +20,4 @@ services:
       # Añade esto para ver las particiones del host
       - /:/host:ro,rslave
     devices:
-      - "/dev/sda"
-      - "/dev/sdb"
-      - "/dev/sdc"
+      - "/dev/nvme0n1"
