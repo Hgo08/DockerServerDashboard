@@ -5,8 +5,15 @@ services:
     restart: always
     network_mode: host
     pid: host
+    cap_add:
+      - SYS_RAWIO
 
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - USUARIO_ADMIN=${USUARIO_ADMIN}
       - PASSWORD_ADMIN=${PASSWORD_ADMIN}
+    volumes:
+      - /run/udev:/run/udev:ro
+    devices:
+      - "/dev/sda"
+      - "/dev/sdb"

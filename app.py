@@ -1,7 +1,7 @@
 from flask import Flask
 from config import Config
 from auth import auth_bp
-from monitor import monitor_bp, streams_bp, iniciar_logs, iniciar_resources, iniciar_process
+from monitor import monitor_bp, streams_bp, iniciar_logs, iniciar_resources, iniciar_process, iniciar_disks
 
 
 def create_app():
@@ -21,6 +21,7 @@ def create_app():
     iniciar_logs()
     iniciar_resources()
     iniciar_process()
+    iniciar_disks()
     
     return app
 

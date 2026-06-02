@@ -22,6 +22,11 @@ def process():
 def logs():
     return render_template('logs.html')
 
+@monitor_bp.route('/disks')
+@login_required
+def disks():
+    return render_template('disks.html')
+
 @monitor_bp.route('/services')
 @login_required
 def services():
