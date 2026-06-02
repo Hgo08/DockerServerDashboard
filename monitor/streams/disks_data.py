@@ -20,26 +20,42 @@ class DatosGlobales:
 
         partitionsWithoutSpace = psutil.disk_partitions()
         completePartitions = []
+        fs_ignorar = {'tmpfs', 'devtmpfs', 'devfs', 'overlay', 'shm', 'squashfs'}
 
         for part in partitionsWithoutSpace:
+            # FILTROS CRÍTICOS:
+            # 1. Debe tener un nombre de dispositivo real (/dev/...)
+            if not part.device.startswith('/dev/'):
+                continue
+            # 2. Ignorar sistemas de archivos virtuales/Docker
+            if part.fstype in fs_ignorar:
+                continue
+            # 3. Ignorar montajes específicos de archivos de Docker
+            if any(x in part.mountpoint for x in ['/etc/hosts', '/etc/hostname', '/etc/resolv.conf', '/docker']):
+                continue
             try:
                 uso = psutil.disk_usage(part.mountpoint)
 
+                display_mount = part.mountpoint.replace('/host', '')
+                if display_mount == "": display_mount = "/"
+
                 datos_particion = {
-                "device": part.device,
-                "mountpoint": part.mountpoint,
-                "fstype": part.fstype,
-                "opts": part.opts,
-                "total": bytes2GB(uso.total),
-                "used": bytes2GB(uso.used),
-                "free": bytes2GB(uso.free),
-                "percent": uso.percent
+                    "device": part.device,
+                    "mountpoint": display_mount,
+                    "fstype": part.fstype,
+                    "opts": part.opts,
+                    "total": bytes2GB(uso.total),
+                    "used": bytes2GB(uso.used),
+                    "free": bytes2GB(uso.free),
+                    "percent": uso.percent
                 }
                 completePartitions.append(datos_particion)
+
             except PermissionError:
                 # Esto sucede a veces con unidades de CD-ROM o discos externos protegidos
                 print(f"Permiso denegado para acceder a {p.mountpoint}")
                 continue
+
             except OSError:
                 # Sucede si un disco se desconectó justo en el proceso
                 continue
