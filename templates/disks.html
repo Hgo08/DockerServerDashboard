@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    * {
+        color: rgb(250, 250, 250);
+    }
+
+    .title {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .global-card {
+        border: 1px solid var(--border-color);
+        background-color: var(--black2);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .grid-row-disks {
+        display: grid;
+        grid-template-columns: 2fr 6fr 1fr 1fr 4fr 1fr 1fr 1fr;
+        align-items: center;
+        gap: 15px;
+        padding: 10px;
+    }
+
+    .grid-row-partitions {
+        display: grid;
+        grid-template-columns: 250px 200px 1fr 150px;
+        align-items: center;
+        gap: 15px;
+        padding: 10px;
+    }
+
+    .section-title {
+        font-weight: bold;
+    }
+
+    .separator {
+        border: none;
+        border-top: 1px solid var(--black4);
+        margin: 10px -10px;
+    }
+    .progress-bar-container {
+    background: var(--black4);
+    border-radius: 10px;
+    height: 8px;
+    width: 100%;
+    overflow: hidden;
+}
+.progress-fill {
+    background: green;
+    height: 100%;
+}
+</style>
+
+<h1 class="title">Almacenamiento</h1>
+
+<h2 class="title"><i class="fa-solid fa-hard-drive"></i> Discos físicos</h2>
+<div class="global-card">
+    <div class="grid-row-disks section-title">
+        <div>Disco</div>
+        <div>Modelo</div>
+        <div>Escritura</div>
+        <div>Lectura</div>
+        <div>Temperatura</div>
+        <div>Salud</div>
+        <div style="grid-column: span 2;">Tamaño</div>
+    </div>
+
+    <hr class="separator">
+    <div id="devices-list">
+        <div class="grid-row-disks">
+            <div>/dev/sdb</div>
+            <div>/mnt/asadasd</div>
+            <div>2.02MB/s</div>
+            <div>67.30MB/s</div>
+            <div>Tamaño</div>
+        </div>
+        <div class="grid-row-disks">
+            <div>/dev/sdb</div>
+            <div>/asd/asdasdasd</div>
+            <div>1.11MB/s</div>
+            <div>0.09MB/s</div>
+            <div>Tamaño</div>
+        </div>
+    </div>
+</div>
+
+
+
+<h2 class="title"><i class="fa-solid fa-chart-pie"></i> Particiones</h2>
+<div class="global-card">
+    <div class="grid-row-partitions section-title">
+        <div>Dispositivo</div>
+        <div>Montaje</div>
+        <div style="grid-column: span 2;">Tamaño</div>
+    </div>
+
+
+    <hr class="separator">
+
+
+    <div id="parts-list">
+        <div class="grid-row-partitions">
+            <div>/dev/sda</div>
+            <div>/</div>
+            <div>50MB/s</div>
+            <div>0.01MB/s</div>
+            <div>Tamaño</div>
+        </div>
+        <div class="grid-row-partitions">
+            <div>/dev/sdb</div>
+            <div>/mnt/asadasd</div>
+            <div>2.02MB/s</div>
+            <div>67.30MB/s</div>
+            <div>Tamaño</div>
+        </div>
+        <div class="grid-row-partitions">
+            <div>/dev/sdb</div>
+            <div>/asd/asdasdasd</div>
+            <div>1.11MB/s</div>
+            <div>0.09MB/s</div>
+            <div class="progress-bar-container"><div class="progress-fill" style="width: 45%;"></div></div>
+            <div>2000.00Gb</div>
+        </div>
+    </div>
+
+</div>
+
+<img src="https://cdn.discordapp.com/attachments/1292887886378569788/1511086037148107053/image-asset.png?ex=6a1f2c09&is=6a1dda89&hm=106529b01fe0f0a9790146aa88a1b94284508779d838c6cb480e6e98c5f83d13&animated=true"
+    width="100px">
+<script>
+    eventSource = new EventSource('/disks-stream');
+
+    eventSource.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+
+        document.getElementById('parts-list').innerHTML = data.disk_parts_html;
+        document.getElementById('devices-list').innerHTML = data.disk_devices_html;
+    };
+</script>
+{% endblock %}

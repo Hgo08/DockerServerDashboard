@@ -225,7 +225,7 @@
         gap: 20px;
         padding: 20px;
     }
-
+/*
     .card {
         border: 1px solid #ddd;
         border-radius: 15px;
@@ -238,7 +238,7 @@
         justify-content: center;
         background-color: #fff;
     }
-
+*/
     .valor {
         font-size: 2rem;
         font-weight: bold;
@@ -355,16 +355,9 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="{{ url_for('monitor.services') }}" class="menu-link {% if request.endpoint == 'services' %}active{% endif %}">
+                <a href="{{ url_for('monitor.disks') }}" class="menu-link {% if request.endpoint == 'monitor.disks' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-server"></i></span>
-                    <span class="menu-text">Servicios</span>
-                </a>
-            </li>
-            </li>            
-            <li class="menu-item">
-                <a href="{{ url_for('monitor.users') }}" class="menu-link {% if request.endpoint == 'users' %}active{% endif %}">
-                    <span class="menu-icon"><i class="fas fa-users"></i></span>
-                    <span class="menu-text">Usuarios</span>
+                    <span class="menu-text">Discos</span>
                 </a>
             </li>
             

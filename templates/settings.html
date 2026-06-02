@@ -1,12 +1,131 @@
 {% extends "base.html" %}
-
-{% block title %}Opciones - Mi Aplicación{% endblock %}
-
 {% block content %}
-<h1>Settings</h1>
 
-<div class="card">
-    <h2>Opciones twin</h2>
-    <p>Aquí van las opciones...</p>
+<style>
+/* Reutilizando tu esquema de colores */
+* { color: rgb(250, 250, 250); }
+
+.disk-grid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.stat-card {
+    background-color: var(--black2);
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stat-value { font-size: 1.5rem; font-weight: bold; color: #00ffcc; }
+.stat-label { font-size: 0.8rem; color: #888; text-transform: uppercase; }
+
+.process-card {
+    border: 1px solid var(--border-color);
+    background-color: var(--black2);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.grid-row-disks {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 100px 100px 120px;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+}
+
+.grid-row-smart {
+    display: grid;
+    grid-template-columns: 1fr 1fr 120px 120px;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+}
+
+.progress-bar-container {
+    background: var(--black4);
+    border-radius: 10px;
+    height: 8px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.progress-fill {
+    background: green;
+    height: 100%;
+}
+
+.status-ok { color: #4caf50; font-weight: bold; }
+.status-warn { color: #ff9800; font-weight: bold; }
+
+.section-title { margin-bottom: 15px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+</style>
+
+<h1 class="title">Almacenamiento</h1>
+
+<div class="disk-grid-container">
+    <div class="stats-overview">
+        <div class="stat-card">
+            <div class="stat-label">Lectura Total</div>
+            <div class="stat-value" id="total-read">-- MB</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Escritura Total</div>
+            <div class="stat-value" id="total-write">-- MB</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">IOPS</div>
+            <div class="stat-value" id="iops">--</div>
+        </div>
+    </div>
+
+    <div class="process-card">
+        <h2 class="section-title"><i class="fa-solid fa-hard-drive"></i> Particiones del Sistema</h2>
+        <div class="grid-row-disks" style="font-weight: bold; border-bottom: 1px solid var(--black4);">
+            <div>Dispositivo</div>
+            <div>Montaje</div>
+            <div>Uso</div>
+            <div>Total</div>
+            <div>Estado</div>
+        </div>
+        <div id="partition-list">
+            <div class="grid-row-disks">
+                <div>/dev/sda1</div>
+                <div>/</div>
+                <div>45%</div>
+                <div>500GB</div>
+                <div class="progress-bar-container"><div class="progress-fill" style="width: 45%;"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="process-card">
+        <h2 class="section-title"><i class="fa-solid fa-microchip"></i> Integridad Física (SMART)</h2>
+        <div class="grid-row-smart" style="font-weight: bold; border-bottom: 1px solid var(--black4);">
+            <div>Disco</div>
+            <div>Modelo</div>
+            <div>Temperatura</div>
+            <div>Salud</div>
+        </div>
+        <div id="smart-list">
+            <div class="grid-row-smart">
+                <div>sda</div>
+                <div>Samsung 870 EVO</div>
+                <div>32°C</div>
+                <div class="status-ok">EXCELENTE</div>
+            </div>
+        </div>
+    </div>
 </div>
+
 {% endblock %}

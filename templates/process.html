@@ -182,7 +182,6 @@
         eventSource = new EventSource(url);
 
         eventSource.onmessage = function(event) {
-            // El servidor nos envía el HTML de los <tr> directamente
             document.getElementById('process-list').innerHTML = event.data;
         };
 

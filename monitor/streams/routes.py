@@ -5,6 +5,7 @@ from decorators import login_required
 from .resources_data import datos_recursos
 from .logs_data import datos_logs
 from .process_data import datos_process 
+from .disks_data import datos_disks
 
 # Crear blueprint para streams
 streams_bp = Blueprint('streams', __name__)
@@ -71,10 +72,6 @@ def process_stream():
                     if search in nombre or search in pid:
                         filtred.append(proc)
 
-                #poner en orden inverso siempre meno cuando se filtra solo por nombre
-                #si es nombre A-Z, si es CPU/RAM/PID Mayor a menor.
-                
-
                 #ordena los procesos filtrados, usando una funcion lambda para ordenarlos por la variable sort_by y que no de error si no tiene valor
                 ordered = sorted(filtred, key=lambda x: x.get(sort_by) if x.get(sort_by) is not None else 0, reverse=inverted)
 
@@ -84,6 +81,36 @@ def process_stream():
 
 
                 yield f"data: {html_limpio}\n\n"
+                time.sleep(1)
+
+    return Response(generar_eventos(), mimetype='text/event-stream')
+
+
+@streams_bp.route('/disks-stream')
+@login_required
+def disks_stream():
+    app = current_app._get_current_object()
+
+    def generar_eventos():
+        with app.app_context():
+            while True:
+
+                #obtenemos todos los discos desde el hilo de actualizacion
+                disksData = datos_disks.obtener_datos()
+
+                #genera el html de los discos desde un template pasando como variable la lista de todos los discos
+                html = render_template('partials/disk_parts.html', disks=disksData['partitions'])
+                disk_parts_clean = html.replace('\n', '').replace('\r', '')
+
+                html = render_template('partials/disk_devices.html', disks=disksData['devices'])
+                disk_devices_clean = html.replace('\n', '').replace('\r', '')
+
+                data = {
+                    "disk_parts_html": disk_parts_clean,
+                    "disk_devices_html": disk_devices_clean
+                }
+
+                yield f"data: {json.dumps(data)}\n\n"
                 time.sleep(1)
 
     return Response(generar_eventos(), mimetype='text/event-stream')
