@@ -3,6 +3,8 @@ import threading
 import time
 import psutil
 from pySMART import Device, DeviceList
+from db_models import Setting
+from flask import current_app
 
 class DatosGlobales:
     def __init__(self):
@@ -13,7 +15,11 @@ class DatosGlobales:
         self.last_io = {} 
         self.last_time = time.time()
     
-    def actualizar(self):
+    def actualizar(self, app):
+        with app.app_context():
+            tempUnit = Setting.get_val('temp_unit', 'C')
+            diskUnit = Setting.get_val('disk_units', '')
+
         current_io = psutil.disk_io_counters(perdisk=True)
         current_time = time.time()
         time_delta = current_time - self.last_time
@@ -34,20 +40,33 @@ class DatosGlobales:
             if any(x in part.mountpoint for x in ['/etc/hosts', '/etc/hostname', '/etc/resolv.conf', '/docker']):
                 continue
             try:
-                uso = psutil.disk_usage(part.mountpoint)
+                space = psutil.disk_usage(part.mountpoint)
 
                 display_mount = part.mountpoint.replace('/host', '')
                 if display_mount == "": display_mount = "/"
+
+                bytesTotal = space.total
+                bytesUsed = space.used
+                bytesFree = space.free
+
+                if (diskUnit == 'GB'):
+                    spaceTotal = bytes2GB(bytesTotal)
+                    spaceUsed  = bytes2GB(bytesUsed)
+                    spaceFree  = bytes2GB(bytesFree)
+                else:
+                    spaceTotal = bytes2GiB(bytesTotal)
+                    spaceUsed  = bytes2GiB(bytesUsed)
+                    spaceFree  = bytes2GiB(bytesFree)
 
                 datos_particion = {
                     "device": part.device,
                     "mountpoint": display_mount,
                     "fstype": part.fstype,
                     "opts": part.opts,
-                    "total": bytes2GB(uso.total),
-                    "used": bytes2GB(uso.used),
-                    "free": bytes2GB(uso.free),
-                    "percent": uso.percent
+                    "total": spaceTotal,
+                    "used": spaceUsed,
+                    "free": spaceFree,
+                    "percent": space.percent
                 }
                 completePartitions.append(datos_particion)
 
@@ -90,15 +109,33 @@ class DatosGlobales:
                     
                     read_speed = (curr.read_bytes - old.read_bytes) / time_delta / (1024 * 1024)
                     write_speed = (curr.write_bytes - old.write_bytes) / time_delta / (1024 * 1024)
+                
+                celsius = device.temperature
+
+                if tempUnit == 'F':
+                    temp = str(round(celsius * 1.8 + 32)) + "º" + tempUnit
+                else:
+                    temp = str(celsius) + "º" + tempUnit
+                
+                diskSize = 'N/A'
+
+                if (device.capacity):
+                    diskSizeBytes = parse_capacity(device.capacity)
+                    if (diskUnit == 'GB'):
+                        diskSize = bytes2GB(diskSizeBytes)
+                    else:
+                        diskSize = bytes2GiB(diskSizeBytes)
+                else:
+                    diskSize = 'N/A'
             
                 current_devices.append({
                     "name": device.name,           # Ej: /dev/sda
                     "model": device.model,         # Ej: ST10000DM0004
-                    "temp": device.temperature,    # Ej: 34 (en grados C)
+                    "temp": temp,    # Ej: 34ºC
                     "health": device.assessment,   # Ej: PASS 
                     "read_speed": f"{round(read_speed, 2)} MB/s",
                     "write_speed": f"{round(write_speed, 2)} MB/s",
-                    "size": device.capacity if device.capacity else "N/A"
+                    "size": f"{diskSize}{diskUnit}"
                 })
         except Exception as e:
             print(f"Error al leer SMART: {e}")
@@ -122,11 +159,11 @@ class DatosGlobales:
 # Instancia global
 datos_disks = DatosGlobales()
 
-def iniciar_actualizacion():
+def iniciar_actualizacion(app):
     """Inicia el hilo de actualización de datos"""
     def actualizar_datos():
         while True:
-            datos_disks.actualizar()
+            datos_disks.actualizar(app)
             time.sleep(1)
     
     hilo = threading.Thread(target=actualizar_datos, daemon=True)
@@ -134,8 +171,6 @@ def iniciar_actualizacion():
     return hilo
 
 
-def bytes2GB(bytes):
-    return round(bytes / 1073741824, 2)
 
 def _obtener_tamano_fisico(disk_name):
         """Lee el tamaño total del disco desde /sys/block en GB"""
@@ -147,3 +182,26 @@ def _obtener_tamano_fisico(disk_name):
                 return bytes2GB(sectores * 512)
         except Exception as e:
             return e
+
+def parse_capacity(capacity_str):
+    value, unit = capacity_str.split()
+    value = float(value)
+
+    unit = unit.upper()
+
+    if unit == "TB":
+        return value * 1000**4
+    elif unit == "GB":
+        return value * 1000**3
+    elif unit == "MB":
+        return value * 1000**2
+    elif unit == "KB":
+        return value * 1000
+    else:
+        return value  # bytes o desconocido
+
+def bytes2GiB(bytes_):
+    return round(bytes_ / 1073741824, 2)
+
+def bytes2GB(bytes_):
+    return round(bytes_ / 1_000_000_000, 2)

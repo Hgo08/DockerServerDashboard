@@ -11,7 +11,6 @@ class DatosGlobales:
     
     def actualizar(self):
         if not os.path.exists(self.ruta_log):
-            print("la ruta no existe")
             return
         with self._lock:
             with open(self.ruta_log, "r") as f:
@@ -35,7 +34,7 @@ class DatosGlobales:
 
 # Instancia global
 # datos_logs = DatosGlobales("C:/Users/Victor/Desktop/log.txt")
-datos_logs = DatosGlobales("/var/log/apache2/access.log")
+datos_logs = DatosGlobales("")
 
 def iniciar_actualizacion():
     """Inicia el hilo de actualización de datos"""

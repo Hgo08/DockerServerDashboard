@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, Response
+from flask import Blueprint, render_template, Response, request, redirect, url_for
 import json
 import time
 from decorators import login_required
 from .streams.resources_data import datos_recursos
+from db_models import db, Setting
 
 monitor_bp = Blueprint('monitor', __name__)
 
@@ -48,8 +49,9 @@ def settings():
     return render_template('settings.html')
 
 @monitor_bp.route('/settings/update', methods=['POST'])
+@login_required # Si tienes este decorador, úsalo aquí también
 def update_settings():
-    # Iteramos sobre todo lo que venga en el form
+    # 1. Guardar lo que llega (Selects y Checkboxes marcados)
     for key, value in request.form.items():
         setting = Setting.query.get(key)
         if setting:
@@ -57,11 +59,16 @@ def update_settings():
         else:
             db.session.add(Setting(key=key, value=value))
     
-    # Lógica especial para el switch (checkbox)
-    # Si no llega en el form es que está "off"
-    if 'ocultar_procesos' not in request.form:
-        s = Setting.query.get('ocultar_procesos')
-        if s: s.value = 'false'
+    # 2. Caso especial: Checkboxes no marcados
+    # Si 'hide_sys_procs' no está en request.form, es que el usuario lo apagó
+    if 'hide_sys_procs' not in request.form:
+        s = Setting.query.get('hide_sys_procs')
+        if s:
+            s.value = 'false'
+        else:
+            db.session.add(Setting(key='hide_sys_procs', value='false'))
     
     db.session.commit()
-    return redirect(url_for('monitor.settings_page'))
+    
+    # Redirigir de vuelta a la página de ajustes
+    return redirect(url_for('monitor.settings'))

@@ -3,6 +3,6 @@
         <div>{{ disk.device }}</div>
         <div>{{ disk.mountpoint }}</div>
         <div class="progress-bar-container"><div class="progress-fill" style="width: {{ disk.percent }}%;"></div></div>
-        <div>{{ disk.used }} / {{ disk.total }} GB</div>
+        <div>{{ disk.used }} / {{ disk.total }} {{settings.disk_units}}</div>
     </div>
 {% endfor %}

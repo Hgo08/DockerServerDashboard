@@ -1,6 +1,8 @@
 import threading
 import time
 import psutil
+from db_models import Setting
+
 
 speed = 1
 
@@ -26,11 +28,15 @@ class DatosGlobales:
         self.diskSpaceUsed = 0
         self.diskSpaceTotal = 0
 
+        self.netUnit = ''
+
         self._lock = threading.Lock()
     
-    def actualizar(self):
+    def actualizar(self, app):
         """Actualiza los datos del sistema"""
         with self._lock:
+            with app.app_context():
+                self.netUnit = Setting.get_val('net_units', '')
             self.timestamp = time.strftime('%H:%M:%S')
             self.cpuTemp = psutil.sensors_temperatures()['coretemp'][0].current
             self.totalRam = psutil.virtual_memory().total
@@ -39,9 +45,9 @@ class DatosGlobales:
 
             self.netSpeedSent = (psutil.net_io_counters().bytes_sent - self.netSent)/speed
             self.netSpeedRecv = (psutil.net_io_counters().bytes_recv - self.netRecv)/speed
-
             self.netSent = psutil.net_io_counters().bytes_sent
             self.netRecv = psutil.net_io_counters().bytes_recv
+
 
             self.diskSpeedRead = (psutil.disk_io_counters().read_bytes - self.diskRead)/speed
             self.diskSpeedWrite = (psutil.disk_io_counters().write_bytes - self.diskWrite)/speed
@@ -62,10 +68,8 @@ class DatosGlobales:
                 'cpu': self.cpu,
                 'timestamp': self.timestamp,
 
-                'netSent': bytes2MegaBytes(self.netSent),
-                'netRecv': bytes2MegaBytes(self.netRecv),
-                'netSpeedRecv': bytes2MegaBytes(self.netSpeedRecv),
-                'netSpeedSent': bytes2MegaBytes(self.netSpeedSent),
+                'netSpeedRecv': bytes2MegaBytes(self.netSpeedRecv) if self.netUnit == 'MB' else bytes2MegaBits(self.netSpeedRecv),
+                'netSpeedSent': bytes2MegaBytes(self.netSpeedSent) if self.netUnit == 'MB' else bytes2MegaBits(self.netSpeedSent),
 
                 'diskRead': bytes2MegaBytes(self.diskRead),
                 'diskWrite': bytes2MegaBytes(self.diskWrite),
@@ -79,21 +83,22 @@ class DatosGlobales:
 # Instancia global
 datos_recursos = DatosGlobales()
 
-def iniciar_actualizacion():
+def iniciar_actualizacion(app):
     """Inicia el hilo de actualización de datos"""
     def actualizar_datos():
         while True:
-            datos_recursos.actualizar()
+            datos_recursos.actualizar(app)
             time.sleep(1)
     
     hilo = threading.Thread(target=actualizar_datos, daemon=True)
     hilo.start()
     return hilo
 
-#funcion para pasar de bytes a gigabytes, solo divide entre 1024^3 (1073741824) y redondea a 2 decimales
 def bytes2GigaBytes(bytes):
     return round(bytes/1073741824, 2)
 
-#funcion para pasar de bytes a megabytes, solo divide entre 1024^2 (1048576) y redondea a 2 decimales
 def bytes2MegaBytes(bytes):
-    return round(bytes/1048576, 2)
+    return round(bytes/1000000, 2)
+
+def bytes2MegaBits(bytes):
+    return round(bytes/125000, 2)
