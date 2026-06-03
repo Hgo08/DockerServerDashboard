@@ -1,6 +1,4 @@
 {% extends "base.html" %}
-{% block title %}Ajustes{% endblock %}
-
 {% block content %}
 <style>
     * {
@@ -24,193 +22,95 @@
         margin-bottom: 25px;
     }
 
-    .section-subtitle {
-        font-size: 1.1rem;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+.grid-row-disks {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 100px 100px 120px;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+}
 
-    /* Fila de ajuste */
-    .setting-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-        border-bottom: 1px solid var(--black4);
-    }
+.grid-row-smart {
+    display: grid;
+    grid-template-columns: 1fr 1fr 120px 120px;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+}
 
-    .setting-row:last-child {
-        border-bottom: none;
-    }
+.progress-bar-container {
+    background: var(--black4);
+    border-radius: 10px;
+    height: 8px;
+    width: 100%;
+    overflow: hidden;
+}
 
-    .setting-info {
-        display: flex;
-        flex-direction: column;
-    }
+.progress-fill {
+    background: green;
+    height: 100%;
+}
 
-    .setting-label {
-        font-weight: 500;
-        font-size: 1rem;
-    }
+.status-ok { color: #4caf50; font-weight: bold; }
+.status-warn { color: #ff9800; font-weight: bold; }
 
-    .setting-description {
-        font-size: 0.85rem;
-        color: #999;
-    }
-
-    /* --- ESTILO DE LOS SWITCHES (ON/OFF) --- */
-    .switch {
-        position: relative;
-        display: inline-block;
-        width: 46px;
-        height: 24px;
-    }
-
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: var(--black4);
-        transition: .3s;
-        border-radius: 24px;
-    }
-
-    .slider:before {
-        position: absolute;
-        content: "";
-        height: 18px;
-        width: 18px;
-        left: 3px;
-        bottom: 3px;
-        background-color: white;
-        transition: .3s;
-        border-radius: 50%;
-    }
-
-    input:checked + .slider {
-        background-color: #27ae60;
-    }
-
-    input:checked + .slider:before {
-        transform: translateX(22px);
-    }
-
-    /* --- ESTILO DE LOS SELECTS (LISTAS) --- */
-    .custom-select {
-        background-color: var(--black3);
-        color: white;
-        border: 1px solid var(--border-color);
-        padding: 8px 12px;
-        border-radius: 6px;
-        outline: none;
-        cursor: pointer;
-        font-size: 0.9rem;
-    }
-
-    .custom-select:focus {
-        border-color: #72afd2;
-    }
-
-    .btn-save {
-        background-color: #72afd2;
-        color: var(--black1);
-        border: none;
-        padding: 10px 25px;
-        border-radius: 6px;
-        font-weight: bold;
-        cursor: pointer;
-        float: right;
-        transition: opacity 0.2s;
-    }
-
-    .btn-save:hover {
-        opacity: 0.9;
-    }
+.section-title { margin-bottom: 15px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
 </style>
 
-<div class="settings-container">
-    <h1 class="title">Ajustes del Sistema</h1>
+<h1 class="title">Almacenamiento</h1>
 
-    <form action="#" method="POST">
-        <h2 class="section-subtitle"><i class="fas fa-sliders-h"></i> General</h2>
-        <div class="global-card">
-            <div class="setting-row">
-                <div class="setting-info">
-                    <span class="setting-label">Unidades de red</span>
-                    <span class="setting-description">Mostrar el uso de red en Mb (Megabits) o MB (Megabytes) por segundo</span>
-                </div>
-                <select class="custom-select">
-                    <option value="C">Megabits (Mb/s)</option>
-                    <option value="F">Megabytes (MB/s)</option>
-                </select>
-            </div>
+<div class="disk-grid-container">
+    <div class="stats-overview">
+        <div class="stat-card">
+            <div class="stat-label">Lectura Total</div>
+            <div class="stat-value" id="total-read">-- MB</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Escritura Total</div>
+            <div class="stat-value" id="total-write">-- MB</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">IOPS</div>
+            <div class="stat-value" id="iops">--</div>
+        </div>
+    </div>
 
-            <div class="setting-row">
-                <div class="setting-info">
-                    <span class="setting-label">Unidades de tamaño de discos</span>
-                    <span class="setting-description">Mostrar el tamaño de los discos en GiB (Gigibytes) o GB (Gigabytes)</span>
-                </div>
-                <select class="custom-select">
-                    <option value="C">Gigibytes (GiB)</option>
-                    <option value="F">Gigabytes (GB)</option>
-                </select>
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-info">
-                    <span class="setting-label">Unidad de Temperatura</span>
-                    <span class="setting-description">Mostrar grados en Celsius o Fahrenheit.</span>
-                </div>
-                <select class="custom-select">
-                    <option value="C">Celsius (°C)</option>
-                    <option value="F">Fahrenheit (°F)</option>
-                </select>
-            </div>
-            
-            <div class="setting-row">
-                <div class="setting-info">
-                    <span class="setting-label">Oculatar procesos del sistema</span>
-                    <span class="setting-description">Ocultar los procesos del sistema como kworker o systemd</span>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" checked>
-                    <span class="slider"></span>
-                </label>
+    <div class="process-card">
+        <h2 class="section-title"><i class="fa-solid fa-hard-drive"></i> Particiones del Sistema</h2>
+        <div class="grid-row-disks" style="font-weight: bold; border-bottom: 1px solid var(--black4);">
+            <div>Dispositivo</div>
+            <div>Montaje</div>
+            <div>Uso</div>
+            <div>Total</div>
+            <div>Estado</div>
+        </div>
+        <div id="partition-list">
+            <div class="grid-row-disks">
+                <div>/dev/sda1</div>
+                <div>/</div>
+                <div>45%</div>
+                <div>500GB</div>
+                <div class="progress-bar-container"><div class="progress-fill" style="width: 45%;"></div></div>
             </div>
         </div>
+    </div>
 
-        <h2 class="section-subtitle"><i class="fas fa-chart-bar"></i> Monitorización</h2>
-        <div class="global-card">
-            <div class="setting-row">
-                <div class="setting-info">
-                    <span class="setting-label">Intervalo de Actualización</span>
-                    <span class="setting-description">Frecuencia con la que se refrescan los datos (SSE).</span>
-                </div>
-                <select class="custom-select">
-                    <option value="1">1 segundo</option>
-                    <option value="2" selected>2 segundos</option>
-                    <option value="5">5 segundos</option>
-                    <option value="10">10 segundos</option>
-                </select>
-            </div>
-
-
+    <div class="process-card">
+        <h2 class="section-title"><i class="fa-solid fa-microchip"></i> Integridad Física (SMART)</h2>
+        <div class="grid-row-smart" style="font-weight: bold; border-bottom: 1px solid var(--black4);">
+            <div>Disco</div>
+            <div>Modelo</div>
+            <div>Temperatura</div>
+            <div>Salud</div>
         </div>
-
-        
-
-        <button type="submit" class="btn-save">Guardar Cambios</button>
-    </form>
+        <div id="smart-list">
+            <div class="grid-row-smart">
+                <div>sda</div>
+                <div>Samsung 870 EVO</div>
+                <div>32°C</div>
+                <div class="status-ok">EXCELENTE</div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
