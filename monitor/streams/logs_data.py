@@ -9,7 +9,9 @@ class DatosGlobales:
         self.lineas = []
         self._lock = threading.Lock()
     
-    def actualizar(self):
+    def actualizar(self, app):
+        with app.app_context():
+            update_delay = Setting.get_val('update_interval', 1)
         if not os.path.exists(self.ruta_log):
             return
         with self._lock:
@@ -36,12 +38,15 @@ class DatosGlobales:
 # datos_logs = DatosGlobales("C:/Users/Victor/Desktop/log.txt")
 datos_logs = DatosGlobales("")
 
-def iniciar_actualizacion():
+def iniciar_actualizacion(app):
     """Inicia el hilo de actualización de datos"""
     def actualizar_datos():
         while True:
-            datos_logs.actualizar()
-            time.sleep(1)
+            with app.app_context():
+                update_delay = float(Setting.get_val('update_interval', 1))
+                
+            datos_logs.actualizar(app)
+            time.sleep(update_delay)
     
     hilo = threading.Thread(target=actualizar_datos, daemon=True)
     hilo.start()

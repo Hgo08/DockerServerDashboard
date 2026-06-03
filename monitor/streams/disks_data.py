@@ -4,7 +4,7 @@ import time
 import psutil
 from pySMART import Device, DeviceList
 from db_models import Setting
-from flask import current_app
+
 
 class DatosGlobales:
     def __init__(self):
@@ -17,6 +17,7 @@ class DatosGlobales:
     
     def actualizar(self, app):
         with app.app_context():
+            update_delay = Setting.get_val('update_interval', 1)
             tempUnit = Setting.get_val('temp_unit', 'C')
             diskUnit = Setting.get_val('disk_units', '')
 
@@ -163,8 +164,11 @@ def iniciar_actualizacion(app):
     """Inicia el hilo de actualización de datos"""
     def actualizar_datos():
         while True:
+            with app.app_context():
+                update_delay = float(Setting.get_val('update_interval', 1))
+                
             datos_disks.actualizar(app)
-            time.sleep(1)
+            time.sleep(update_delay)
     
     hilo = threading.Thread(target=actualizar_datos, daemon=True)
     hilo.start()
