@@ -3,9 +3,6 @@ import time
 import psutil
 from db_models import Setting
 
-
-speed = 1
-
 class DatosGlobales:
     def __init__(self):
         self.timestamp = time.strftime('%H:%M:%S')
@@ -36,6 +33,7 @@ class DatosGlobales:
         """Actualiza los datos del sistema"""
         with self._lock:
             with app.app_context():
+                update_delay = float(Setting.get_val('update_interval', 1))
                 self.netUnit = Setting.get_val('net_units', '')
             self.timestamp = time.strftime('%H:%M:%S')
             self.cpuTemp = psutil.sensors_temperatures()['coretemp'][0].current
@@ -43,14 +41,14 @@ class DatosGlobales:
             self.usedRam = psutil.virtual_memory().used
             self.cpu = psutil.cpu_percent()
 
-            self.netSpeedSent = (psutil.net_io_counters().bytes_sent - self.netSent)/speed
-            self.netSpeedRecv = (psutil.net_io_counters().bytes_recv - self.netRecv)/speed
+            self.netSpeedSent = (psutil.net_io_counters().bytes_sent - self.netSent)/update_delay
+            self.netSpeedRecv = (psutil.net_io_counters().bytes_recv - self.netRecv)/update_delay
             self.netSent = psutil.net_io_counters().bytes_sent
             self.netRecv = psutil.net_io_counters().bytes_recv
 
 
-            self.diskSpeedRead = (psutil.disk_io_counters().read_bytes - self.diskRead)/speed
-            self.diskSpeedWrite = (psutil.disk_io_counters().write_bytes - self.diskWrite)/speed
+            self.diskSpeedRead = (psutil.disk_io_counters().read_bytes - self.diskRead)/update_delay
+            self.diskSpeedWrite = (psutil.disk_io_counters().write_bytes - self.diskWrite)/update_delay
 
             self.diskRead = psutil.disk_io_counters().read_bytes
             self.diskWrite = psutil.disk_io_counters().write_bytes
@@ -87,8 +85,11 @@ def iniciar_actualizacion(app):
     """Inicia el hilo de actualización de datos"""
     def actualizar_datos():
         while True:
+            with app.app_context():
+                update_delay = float(Setting.get_val('update_interval', 1))
+
             datos_recursos.actualizar(app)
-            time.sleep(1)
+            time.sleep(update_delay)
     
     hilo = threading.Thread(target=actualizar_datos, daemon=True)
     hilo.start()

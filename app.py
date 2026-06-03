@@ -38,7 +38,8 @@ def create_app():
     app.register_blueprint(streams_bp)
     
     # Iniciar actualización de datos
-    iniciar_logs()
+    
+    #iniciar_logs(app)
     iniciar_resources(app)
     iniciar_process(app)
     iniciar_disks(app)

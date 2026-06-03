@@ -6,18 +6,28 @@ from .resources_data import datos_recursos
 from .logs_data import datos_logs
 from .process_data import datos_process 
 from .disks_data import datos_disks
+from db_models import Setting
 
 # Crear blueprint para streams
 streams_bp = Blueprint('streams', __name__)
 
+def get_setting(key, default):
+    with current_app.app_context():
+        return float(Setting.get_val(key, default))
+
+
+
 @streams_bp.route('/monitor-stream')
 @login_required
 def monitor_stream():
+    app = current_app._get_current_object()
     def generar_eventos():
         while True:
+            with app.app_context():
+                update_delay = get_setting('update_interval', 1)
             datos_actuales = datos_recursos.obtener_datos()
             yield f"data: {json.dumps(datos_actuales)}\n\n"
-            time.sleep(1)
+            time.sleep(update_delay)
 
     response = Response(generar_eventos(), mimetype='text/event-stream')
     response.headers['X-Accel-Buffering'] = 'no'
@@ -29,11 +39,14 @@ def monitor_stream():
 @streams_bp.route('/logs-stream')
 @login_required
 def logs_stream():
+    app = current_app._get_current_object()
     def generar_eventos():
          while True:
+            with app.app_context():
+                update_delay = get_setting('update_interval', 1)
             datos_actuales = datos_logs.obtener_datos()
             yield f"data: {json.dumps(datos_actuales)}\n\n"
-            time.sleep(1)
+            time.sleep(update_delay)
 
     response = Response(generar_eventos(), mimetype='text/event-stream')
     response.headers['X-Accel-Buffering'] = 'no'
@@ -45,32 +58,40 @@ def logs_stream():
 @streams_bp.route('/process-stream')
 @login_required
 def process_stream():
+    app = current_app._get_current_object()
     #obtenemos los parametros de la URL, si no existen se usa por defecto el segundo valor ('' y 'cpu_percent)
     search = request.args.get('search', '').lower()
     sort_by = request.args.get('sort', 'cpu_percent')
     inverted = request.args.get('inverted', 'false').lower() == 'true'
 
-    app = current_app._get_current_object()
 
     def generar_eventos():
         with app.app_context():
             while True:
+                with app.app_context():
+                    update_delay = get_setting('update_interval', 1)
                 #obtenemos todos los procesos desde el hilo de actualizacion
                 allProcess = datos_process.obtener_datos()
 
                 #inicializamos la lista
                 filtred = []
 
-                #solo filtrar si la busqueda no esta vacia
-                #if search != '':
+
                 for proc in allProcess:
-                    #por cada proceso, se obtiene su nombre y su PID
-                    #(se usa 'or' para establecer un valor por defecto por si no se puede acceder a 'name' o 'pid' y asi evitar errores)
-                    nombre = str(proc.get('name') or '').lower()
-                    pid = str(proc.get('pid') or '')
-                    #si la busqueda contiene el nombre o el pid del proceso de la iteracion actual, se añade a la lista de procesos filtrados
-                    if search in nombre or search in pid:
+                    #si la busqueda empieza por #, busca concidencia exacta de PID, si no busca si contiene la busqueda en nombre
+                    if search == '' or search == '#':
                         filtred.append(proc)
+                    elif search[0] == '#':
+                        pid = str(proc.get('pid') or '')
+                        if search[1:] == pid:
+                            filtred.append(proc)
+                    else:
+                        #por cada proceso, se obtiene su nombre
+                        #(se usa 'or' para establecer un valor por defecto por si no se puede acceder a 'name' o 'pid' y asi evitar errores)
+                        nombre = str(proc.get('name') or '').lower()
+                        #si la busqueda contiene el nombre o el pid del proceso de la iteracion actual, se añade a la lista de procesos filtrados
+                        if search in nombre:
+                            filtred.append(proc)
 
                 #ordena los procesos filtrados, usando una funcion lambda para ordenarlos por la variable sort_by y que no de error si no tiene valor
                 ordered = sorted(filtred, key=lambda x: x.get(sort_by) if x.get(sort_by) is not None else 0, reverse=inverted)
@@ -81,7 +102,7 @@ def process_stream():
 
 
                 yield f"data: {html_limpio}\n\n"
-                time.sleep(1)
+                time.sleep(update_delay)
 
     return Response(generar_eventos(), mimetype='text/event-stream')
 
@@ -90,10 +111,11 @@ def process_stream():
 @login_required
 def disks_stream():
     app = current_app._get_current_object()
-
     def generar_eventos():
         with app.app_context():
             while True:
+                with app.app_context():
+                    update_delay = get_setting('update_interval', 1)
 
                 #obtenemos todos los discos desde el hilo de actualizacion
                 disksData = datos_disks.obtener_datos()
@@ -111,6 +133,6 @@ def disks_stream():
                 }
 
                 yield f"data: {json.dumps(data)}\n\n"
-                time.sleep(1)
+                time.sleep(update_delay)
 
     return Response(generar_eventos(), mimetype='text/event-stream')

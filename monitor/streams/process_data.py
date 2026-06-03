@@ -4,15 +4,16 @@ import time
 import psutil
 from db_models import Setting
 
-
 class DatosGlobales:
     def __init__(self):
         self.processList = []
         self._lock = threading.Lock()
     
     def actualizar(self, app):
-        with self._lock:
-            self.processList = getAllProcess(app)
+        with app.app_context():
+            update_delay = Setting.get_val('update_interval', 1)
+            with self._lock:
+                self.processList = getAllProcess()
 
     def obtener_datos(self):
         """Obtiene una copia segura de los datos actuales"""
@@ -26,14 +27,17 @@ def iniciar_actualizacion(app):
     """Inicia el hilo de actualización de datos"""
     def actualizar_datos():
         while True:
+            with app.app_context():
+                update_delay = float(Setting.get_val('update_interval', 1))
+                
             datos_process.actualizar(app)
-            time.sleep(1)
+            time.sleep(update_delay)
     
     hilo = threading.Thread(target=actualizar_datos, daemon=True)
     hilo.start()
     return hilo
 
-def getAllProcess(app):
+def getAllProcess():
     #inicializamos la lista
     process = []
 
@@ -43,9 +47,9 @@ def getAllProcess(app):
             is_kernel = proc.ppid() == 2 or not proc.exe()
         except (psutil.AccessDenied, psutil.NoSuchProcess):
             is_kernel = True
-        with app.app_context():
-            if Setting.get_val('hide_sys_procs', '') == 'true' and is_kernel:
-                continue
+        
+        if Setting.get_val('hide_sys_procs', '') == 'true' and is_kernel:
+            continue
 
 
         #intenta meter el proceso a la lista, si da un error de acceso denegado o el proceso no existe, salta al siguiente proceso
