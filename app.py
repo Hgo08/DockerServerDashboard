@@ -14,6 +14,16 @@ def create_app():
 
     db.init_app(app)
 
+    @app.context_processor
+    def inject_settings():
+        # Consultamos la base de datos y creamos un diccionario
+        # Si la tabla está vacía, devolverá un diccionario vacío {}
+        try:
+            all_settings = {s.key: s.value for s in Setting.query.all()}
+        except:
+            all_settings = {}
+        return dict(settings=all_settings)
+
     with app.app_context():
         db.create_all()
 
@@ -29,9 +39,9 @@ def create_app():
     
     # Iniciar actualización de datos
     iniciar_logs()
-    iniciar_resources()
-    iniciar_process()
-    iniciar_disks()
+    iniciar_resources(app)
+    iniciar_process(app)
+    iniciar_disks(app)
     
     return app
 

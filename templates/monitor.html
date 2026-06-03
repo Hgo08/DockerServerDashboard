@@ -83,7 +83,7 @@
         display: flex;
         justify-content: space-around;
         text-align: center;
-        font-size: 1.8rem;
+        font-size: 1.2rem;
         font-weight: bold;
         margin-bottom: 5px;
         align-self: center;
@@ -130,7 +130,7 @@
         </div>
         <div class="metric-card" id="card-temp">
             <div class="metric-header"><i class="fa-solid fa-temperature-half"></i> Temperatura</div>
-            <div class="metric-body"><span id="temp"></span>ºC</div>
+            <div class="metric-body"><span id="temp"></span>º{{settings.temp_unit}}</div>
             <div class="chart-container">
                 <canvas id="chart-temp"></canvas>
             </div>
@@ -161,10 +161,10 @@
             <div class="metric-header"><i class="fa-solid fa-network-wired"></i> Tráfico de Red</div>
             <div class="double-metric-body">
                 <div>
-                    <i class="fa-solid fa-download"></i><span id="net-down"></span>MB/s
+                    <i class="fa-solid fa-download"></i><span id="net-down"></span>{{settings.net_units}}/s
                 </div>
                 <div>
-                    <i class="fa-solid fa-upload"></i><span id="net-up"></span>MB/s
+                    <i class="fa-solid fa-upload"></i><span id="net-up"></span>{{settings.net_units}}/s
                 </div>
             </div>
             <div class="chart-container">
@@ -299,7 +299,16 @@
         updateChart(diskSpaceChart, diskUsedPercent);
 
         document.getElementById('cpu').textContent = data.cpu;
-        document.getElementById('temp').textContent = data.cpuTemp;
+        celsius = data.cpuTemp
+        tempUnit = '{{settings.temp_unit}}'
+        console.log(tempUnit)
+        console.log(celsius)
+        if (tempUnit == 'F')
+            temp = Math.round(celsius * 1.8 + 32)
+        else
+            temp = celsius
+
+        document.getElementById('temp').textContent = temp;
         document.getElementById('ram').textContent = data.usedRam;
         document.getElementById('diskSpaceUsed').textContent = data.diskSpaceUsed;
 

@@ -142,7 +142,7 @@
 <div class="settings-container">
     <h1 class="title">Ajustes del Sistema</h1>
 
-    <form action="#" method="POST">
+    <form action="{{ url_for('monitor.update_settings') }}" method="POST">
         <h2 class="section-subtitle"><i class="fas fa-sliders-h"></i> General</h2>
         <div class="global-card">
             <div class="setting-row">
@@ -150,9 +150,9 @@
                     <span class="setting-label">Unidades de red</span>
                     <span class="setting-description">Mostrar el uso de red en Mb (Megabits) o MB (Megabytes) por segundo</span>
                 </div>
-                <select class="custom-select">
-                    <option value="C">Megabits (Mb/s)</option>
-                    <option value="F">Megabytes (MB/s)</option>
+                <select name="net_units" class="custom-select">
+                    <option value="Mb" {% if settings.net_units == 'Mb' %}selected{% endif %}>Megabits (Mb/s)</option>
+                    <option value="MB" {% if settings.net_units == 'MB' %}selected{% endif %}>Megabytes (MB/s)</option>
                 </select>
             </div>
 
@@ -161,9 +161,9 @@
                     <span class="setting-label">Unidades de tamaño de discos</span>
                     <span class="setting-description">Mostrar el tamaño de los discos en GiB (Gigibytes) o GB (Gigabytes)</span>
                 </div>
-                <select class="custom-select">
-                    <option value="C">Gigibytes (GiB)</option>
-                    <option value="F">Gigabytes (GB)</option>
+                <select name="disk_units" class="custom-select">
+                    <option value="GiB" {% if settings.disk_units == 'GiB' %}selected{% endif %}>Gigibytes (GiB)</option>
+                    <option value="GB" {% if settings.disk_units == 'GB' %}selected{% endif %}>Gigabytes (GB)</option>
                 </select>
             </div>
 
@@ -172,9 +172,9 @@
                     <span class="setting-label">Unidad de Temperatura</span>
                     <span class="setting-description">Mostrar grados en Celsius o Fahrenheit.</span>
                 </div>
-                <select class="custom-select">
-                    <option value="C">Celsius (°C)</option>
-                    <option value="F">Fahrenheit (°F)</option>
+                <select name="temp_unit" class="custom-select">
+                    <option value="C" {% if settings.temp_unit == 'C' %}selected{% endif %}>Celsius (°C)</option>
+                    <option value="F" {% if settings.temp_unit == 'F' %}selected{% endif %}>Fahrenheit (°F)</option>
                 </select>
             </div>
             
@@ -184,9 +184,9 @@
                     <span class="setting-description">Ocultar los procesos del sistema como kworker o systemd</span>
                 </div>
                 <label class="switch">
-                    <input type="checkbox" checked>
-                    <span class="slider"></span>
-                </label>
+                    <input type="checkbox" name="hide_sys_procs" value="true" {% if settings.hide_sys_procs == 'true' %}checked{% endif %}>
+                <span class="slider"></span>
+            </label>
             </div>
         </div>
 
@@ -195,13 +195,13 @@
             <div class="setting-row">
                 <div class="setting-info">
                     <span class="setting-label">Intervalo de Actualización</span>
-                    <span class="setting-description">Frecuencia con la que se refrescan los datos (SSE).</span>
+                    <span class="setting-description">Frecuencia con la que se refrescan los datos (Server Side Events).</span>
                 </div>
-                <select class="custom-select">
-                    <option value="1">1 segundo</option>
-                    <option value="2" selected>2 segundos</option>
-                    <option value="5">5 segundos</option>
-                    <option value="10">10 segundos</option>
+                <select name="update_interval" class="custom-select">
+                    <option value="1" {% if settings.update_interval == '1' %}selected{% endif %}>1 segundo</option>
+                    <option value="2" {% if settings.update_interval == '2' or not settings.update_interval %}selected{% endif %}>2 segundos</option>
+                    <option value="5" {% if settings.update_interval == '5' %}selected{% endif %}>5 segundos</option>
+                    <option value="10" {% if settings.update_interval == '10' %}selected{% endif %}>10 segundos</option>
                 </select>
             </div>
 
