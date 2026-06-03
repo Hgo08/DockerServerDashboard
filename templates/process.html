@@ -80,20 +80,18 @@
 }
 
 .process-card{
-    border: 1px solid var(--card-border);
-    background-color: var(--card-bg);
-    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    background-color: var(--black2);
     border-radius: 10px;
     padding: 10px;
 }
 
-.col-pid {
-    border-right: 1px solid var(--card-border);
-    padding-right: 10px;
+.col-cpu, .col-user {
+    text-align: center;
 }
 
-.col-cpu, .col-ram, .col-user {
-    text-align: center;
+.col-ram {
+    text-align: right;
 }
 
 .col-actions {
@@ -105,7 +103,7 @@
 .action-btn {
     width: 18px;
     height: 18px;
-    border: 1px solid var(--card-border);
+    border: 1px solid var(--border-color);
     border-radius: 50%;
     background: darkred;
     cursor: pointer;

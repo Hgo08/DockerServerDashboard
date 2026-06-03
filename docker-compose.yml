@@ -5,8 +5,21 @@ services:
     restart: always
     network_mode: host
     pid: host
-
+    cap_add:
+      - SYS_RAWIO
+      - SYS_ADMIN
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - USUARIO_ADMIN=${USUARIO_ADMIN}
       - PASSWORD_ADMIN=${PASSWORD_ADMIN}
+    volumes:
+      - /run/udev:/run/udev:ro
+      - /dev:/dev:ro
+      - /sys:/sys:ro
+      - /proc:/proc:ro
+      # Añade esto para ver las particiones del host
+      - /:/host:ro,rslave
+    devices:
+      - "/dev/sda"
+      - "/dev/sdb"
+      - "/dev/sdc"

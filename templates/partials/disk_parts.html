@@ -1,0 +1,8 @@
+{% for disk in disks %}
+   <div class="grid-row-partitions">
+        <div>{{ disk.device }}</div>
+        <div>{{ disk.mountpoint }}</div>
+        <div class="progress-bar-container"><div class="progress-fill" style="width: {{ disk.percent }}%;"></div></div>
+        <div>{{ disk.used }} / {{ disk.total }} GB</div>
+    </div>
+{% endfor %}

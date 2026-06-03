@@ -1,162 +1,170 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Acceso</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - System Monitor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reutilizamos tus variables exactas */
+        :root {
+            --black1: #0a0a0a;
+            --black2: #171717;
+            --black3: #1E1E1E;
+            --black4: #2F2F2F;
+            --border-color: #2F2F2F;
+        }
 
-  body {
-    background-color: #0f1115; /* Fondo carbón casi negro */
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Mono', monospace;
-    color: #e3e4e6; /* Blanco gélido */
-  }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: #f0f0f1;
+        }
 
-  .card {
-    background: #181a20; /* Gris oscuro neutro */
-    width: 100%;
-    max-width: 400px;
-    padding: 40px;
-    border-radius: 6px;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
-  }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--black1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-  .header {
-    margin-bottom: 32px;
-    text-align: center;
-  }
+        /* Estilo de la tarjeta basado en tus process-card */
+        .login-card {
+            background-color: var(--black2);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
 
-  h1 {
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    color: #e3e4e6;
-  }
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-  h1 span {
-    color: #56b6e3; /* Detalle celeste apagado */
-  }
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
 
-  .error-box {
-    background: rgba(239, 68, 68, 0.08);
-    border-left: 3px solid #f87171;
-    padding: 12px;
-    margin-bottom: 24px;
-    font-size: 12px;
-    color: #fca5a5;
-  }
+        /* Contenedores de input similares a tu barra de búsqueda */
+        .input-group {
+            margin-bottom: 20px;
+        }
 
-  .field {
-    margin-bottom: 20px;
-  }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #888;
+            font-weight: 500;
+        }
 
-  label {
-    display: block;
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #717680; /* Gris atenuado */
-    margin-bottom: 6px;
-  }
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background-color: var(--black1);
+            border: 1px solid var(--black4);
+            border-radius: 10px;
+            padding: 10px 15px;
+            transition: border-color 0.3s;
+        }
 
-  input {
-    width: 100%;
-    background: #0f1115;
-    border: 1px solid #2d3139;
-    border-radius: 4px;
-    padding: 12px 14px;
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    color: #ffffff;
-    outline: none;
-    transition: all 0.2s ease;
-  }
+        .input-wrapper:focus-within {
+            border-color: #999999;
+        }
 
-  input::placeholder { color: #4b505c; }
+        .input-wrapper i {
+            color: #555;
+            margin-right: 12px;
+            font-size: 16px;
+        }
 
-  input:focus {
-    border-color: #56b6e3;
-    box-shadow: 0 0 0 3px rgba(86, 182, 227, 0.1);
-  }
+        .input-wrapper input {
+            background: none;
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 15px;
+        }
 
-  .btn {
-    margin-top: 28px;
-    width: 100%;
-    padding: 14px;
-    background: #e3e4e6; /* Botón claro para contraste radical */
-    color: #0f1115;
-    border: none;
-    border-radius: 4px;
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.2s ease;
-  }
+        .btn-login{
+            width: 100%;
+            padding: 12px;
+            background: var(--black3);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: opacity 0.2s, transform 0.1s;
+        }
 
-  .btn:hover {
-    background: #ffffff;
-  }
+        .btn-login:hover {
+            opacity: 0.8;
+        }
 
-  .footer {
-    margin-top: 24px;
-    text-align: center;
-    font-size: 12px;
-    color: #717680;
-  }
+        .btn-login:active {
+            transform: scale(0.98);
+        }
 
-  .footer a {
-    color: #56b6e3;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .footer a:hover { 
-    color: #7dd3fc;
-    text-decoration: underline; 
-  }
-</style>
+        .error-box {
+            background-color: rgba(214, 54, 56, 0.1);
+            border: 1px solid #d63638;
+            color: #ff6b6b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
 
-<div class="card">
-  <div class="header">
-    <h1>Inicio de <span>sesión</span></h1>
-  </div>
+    <div class="login-card">
+        <div class="login-header">
+            <h1>Iniciar Sesión</h1>
+        </div>
 
-  {% if error %}
-  <div class="error-box">
-    ⚠ {{ error }}
-  </div>
-  {% endif %}
+        {% if error %}
+        <div class="error-box">
+            <i class="fas fa-circle-exclamation"></i>
+            {{ error }}
+        </div>
+        {% endif %}
 
-  <form action="login" method="POST">
-    <div class="field">
-      <label for="usuario">Usuario</label>
-      <input type="text" id="usuario" name="usuario" placeholder="Tu usuario" autocomplete="off" />
+        <form action="login" method="POST">
+            <div class="input-group">
+                <label for="usuario">Usuario</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="usuario" name="usuario" placeholder="Admin" required autocomplete="off">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Contraseña</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">
+                Iniciar Sesión <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+            </button>
+        </form>
     </div>
-
-    <div class="field">
-      <label for="password">Contraseña</label>
-      <input type="password" id="password" name="password" placeholder="••••••••" />
-    </div>
-
-    <button type="submit" class="btn">Entrar</button>
-  </form>
-
-  <div class="footer">
-    ¿Olvidaste tu contraseña? <a href="#">Recupérala</a>
-  </div>
-</div>
 
 </body>
 </html>
