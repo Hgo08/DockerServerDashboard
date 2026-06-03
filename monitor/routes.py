@@ -46,3 +46,22 @@ def users():
 @login_required
 def settings():
     return render_template('settings.html')
+
+@monitor_bp.route('/settings/update', methods=['POST'])
+def update_settings():
+    # Iteramos sobre todo lo que venga en el form
+    for key, value in request.form.items():
+        setting = Setting.query.get(key)
+        if setting:
+            setting.value = value
+        else:
+            db.session.add(Setting(key=key, value=value))
+    
+    # Lógica especial para el switch (checkbox)
+    # Si no llega en el form es que está "off"
+    if 'ocultar_procesos' not in request.form:
+        s = Setting.query.get('ocultar_procesos')
+        if s: s.value = 'false'
+    
+    db.session.commit()
+    return redirect(url_for('monitor.settings_page'))
