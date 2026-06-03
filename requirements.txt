@@ -2,3 +2,4 @@ flask
 psutil
 python-dotenv
 pySMART
+flask_sqlalchemy
