@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["gunicorn", "--worker-class", "gthread", "--threads", "4", "--workers", "1", "--timeout", "0", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "-k", "gevent", "--worker-connections", "1000", "--workers", "1", "--timeout", "0", "-b", "0.0.0.0:5000", "app:app"]

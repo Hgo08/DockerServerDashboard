@@ -406,14 +406,18 @@
 
     <script>
         eventSource.onerror = function(error) {
-            document.querySelector('.status').innerHTML = '🔴 Desconectado';
+            document.querySelector('.status').innerHTML = '<i class="fa-solid fa-circle"></i> Desconectado';
             document.querySelector('.status').style.color = '#e74c3c';
         };
 
         eventSource.onopen = function() {
-            document.querySelector('.status').innerHTML = '🟢 Conectado';
+            document.querySelector('.status').innerHTML = '<i class="fa-solid fa-circle"></i> Conectado';
             document.querySelector('.status').style.color = '#27ae60';
         };
+        window.addEventListener('beforeunload', () => {
+            console.log("Cerrando SSE antes de cambiar de página...");
+            eventSource.close();
+        });
     </script>
 </body>
 </html>
