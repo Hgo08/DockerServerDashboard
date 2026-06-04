@@ -1,116 +1,238 @@
 {% extends "base.html" %}
+
+{% block title %}Monitor - Ajustes del Sistema{% endblock %}
+
 {% block content %}
 <style>
-    * {
-        color: rgb(250, 250, 250);
-    }
-
     .title {
         margin-top: 20px;
         margin-bottom: 20px;
+        color: var(--text-color);
+        transition: color 0.3s;
     }
 
     .settings-container {
         max-width: 800px;
         margin: 0 auto;
+        padding: 20px;
     }
 
     .global-card {
         border: 1px solid var(--border-color);
-        background-color: var(--black2);
+        background-color: var(--card-bg);
         border-radius: 10px;
         margin-bottom: 25px;
+        overflow: hidden; 
+        transition: background-color 0.3s, border-color 0.3s;
     }
 
-.grid-row-disks {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 100px 100px 120px;
-    align-items: center;
-    gap: 15px;
-    padding: 10px;
-}
+    .section-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #72afd2; 
+    }
 
-.grid-row-smart {
-    display: grid;
-    grid-template-columns: 1fr 1fr 120px 120px;
-    align-items: center;
-    gap: 15px;
-    padding: 10px;
-}
+    .setting-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+    }
 
-.progress-bar-container {
-    background: var(--black4);
-    border-radius: 10px;
-    height: 8px;
-    width: 100%;
-    overflow: hidden;
-}
+    .setting-row:last-child {
+        border-bottom: none;
+    }
 
-.progress-fill {
-    background: green;
-    height: 100%;
-}
+    .setting-info {
+        display: flex;
+        flex-direction: column;
+        padding-right: 15px;
+    }
 
-.status-ok { color: #4caf50; font-weight: bold; }
-.status-warn { color: #ff9800; font-weight: bold; }
+    .setting-label {
+        font-weight: 500;
+        font-size: 1rem;
+        color: var(--text-color);
+        transition: color 0.3s;
+    }
 
-.section-title { margin-bottom: 15px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+    .setting-description {
+        font-size: 0.85rem;
+        color: var(--menu-icon-color); 
+        margin-top: 4px;
+        transition: color 0.3s;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 46px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: var(--black4);
+        transition: .3s;
+        border-radius: 24px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: #ffffff; 
+        transition: .3s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background-color: #27ae60;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(22px);
+    }
+
+    .custom-select {
+        background-color: var(--black3);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        padding: 8px 12px;
+        border-radius: 6px;
+        outline: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    .custom-select:focus {
+        border-color: #72afd2;
+    }
+
+    .btn-save {
+        background-color: #72afd2;
+        color: #0a0a0a;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        float: right;
+        transition: opacity 0.2s;
+    }
+
+    .btn-save:hover {
+        opacity: 0.9;
+    }
 </style>
 
-<h1 class="title">Almacenamiento</h1>
+<div class="settings-container">
+    <h1 class="title">Ajustes del Sistema</h1>
 
-<div class="disk-grid-container">
-    <div class="stats-overview">
-        <div class="stat-card">
-            <div class="stat-label">Lectura Total</div>
-            <div class="stat-value" id="total-read">-- MB</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Escritura Total</div>
-            <div class="stat-value" id="total-write">-- MB</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">IOPS</div>
-            <div class="stat-value" id="iops">--</div>
-        </div>
-    </div>
+    <form action="/settings/update" method="POST">
+        <h2 class="section-subtitle"><i class="fas fa-sliders-h"></i> General</h2>
+        <div class="global-card">
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label">Unidades de red</span>
+                    <span class="setting-description">Mostrar el uso de red en Mb (Megabits) o MB (Megabytes) por segundo</span>
+                </div>
+                <select name="net_units" class="custom-select">
+                    <option value="Mb">Megabits (Mb/s)</option>
+                    <option value="MB" selected>Megabytes (MB/s)</option>
+                </select>
+            </div>
 
-    <div class="process-card">
-        <h2 class="section-title"><i class="fa-solid fa-hard-drive"></i> Particiones del Sistema</h2>
-        <div class="grid-row-disks" style="font-weight: bold; border-bottom: 1px solid var(--black4);">
-            <div>Dispositivo</div>
-            <div>Montaje</div>
-            <div>Uso</div>
-            <div>Total</div>
-            <div>Estado</div>
-        </div>
-        <div id="partition-list">
-            <div class="grid-row-disks">
-                <div>/dev/sda1</div>
-                <div>/</div>
-                <div>45%</div>
-                <div>500GB</div>
-                <div class="progress-bar-container"><div class="progress-fill" style="width: 45%;"></div></div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label">Unidades de tamaño de discos</span>
+                    <span class="setting-description">Mostrar el tamaño de los discos en GiB (Gigibytes) o GB (Gigabytes)</span>
+                </div>
+                <select name="disk_units" class="custom-select">
+                    <option value="GiB">Gigibytes (GiB)</option>
+                    <option value="GB" selected>Gigabytes (GB)</option>
+                </select>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label">Unidad de Temperatura</span>
+                    <span class="setting-description">Mostrar grados en Celsius o Fahrenheit.</span>
+                </div>
+                <select name="temp_unit" class="custom-select">
+                    <option value="C" selected>Celsius (°C)</option>
+                    <option value="F">Fahrenheit (°F)</option>
+                </select>
+            </div>
+            
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label">Ocultar procesos del sistema</span>
+                    <span class="setting-description">Ocultar los procesos del sistema como kworker o systemd</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" name="hide_sys_procs" value="true" checked>
+                    <span class="slider"></span>
+                </label>
             </div>
         </div>
-    </div>
 
-    <div class="process-card">
-        <h2 class="section-title"><i class="fa-solid fa-microchip"></i> Integridad Física (SMART)</h2>
-        <div class="grid-row-smart" style="font-weight: bold; border-bottom: 1px solid var(--black4);">
-            <div>Disco</div>
-            <div>Modelo</div>
-            <div>Temperatura</div>
-            <div>Salud</div>
-        </div>
-        <div id="smart-list">
-            <div class="grid-row-smart">
-                <div>sda</div>
-                <div>Samsung 870 EVO</div>
-                <div>32°C</div>
-                <div class="status-ok">EXCELENTE</div>
+        <h2 class="section-subtitle"><i class="fas fa-chart-bar"></i> Monitorización</h2>
+        <div class="global-card">
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label">Intervalo de Actualización</span>
+                    <span class="setting-description">Frecuencia con la que se refrescan los datos (Server Side Events).</span>
+                </div>
+                <select name="update_interval" class="custom-select">
+                    <option value="0.1">0.1 segundos</option>
+                    <option value="0.5">0.5 segundos</option>
+                    <option value="1" selected>1 segundo</option>
+                    <option value="2">2 segundos</option>
+                    <option value="5">5 segundos</option>
+                    <option value="10">10 segundos</option>
+                </select>
             </div>
         </div>
-    </div>
+
+        <button type="submit" class="btn-save">Guardar Cambios</button>
+    </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        
+        if (sidebarToggle) {
+            const savedState = localStorage.getItem('sidebarOpen');
+            
+            if (savedState === 'true') {
+                sidebarToggle.checked = true;
+            }
+            
+            sidebarToggle.addEventListener('change', function() {
+                localStorage.setItem('sidebarOpen', this.checked);
+            });
+        }
+    });
+</script>
 {% endblock %}

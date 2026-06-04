@@ -8,243 +8,190 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+        /* TEMA OSCURO (Por defecto) */
+        :root {
+            --black1: #0a0a0a;
+            --black2: #171717;
+            --black3: #1E1E1E;
+            --black4: #2F2F2F;
+            --card-bg: #171717;
+            --border-color: #2F2F2F;
+            --body-bg: #0a0a0a;
+            --text-color: #f0f0f1;
+            --menu-icon-color: #f0f0f1;
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 60px;
+        }
 
-    :root {
-        --black1: #0a0a0a;
-        --black2: #171717;
-        --black3: #1E1E1E;
-        --black4: #2F2F2F;
-        --card-bg: #171717;
-        --border-color: #2F2F2F;
-        --body-bg: #0a0a0a;
+        /* TEMA CLARO */
+        body.light-theme {
+            --black1: #f4f5f7;
+            --black2: #ffffff;
+            --black3: #ffffff;
+            --black4: #e2e8f0;
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1;
+            --body-bg: #f4f5f7;
+            --text-color: #1e293b;
+            --menu-icon-color: #64748b;
+        }
 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
 
-    }
-    
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
-        background-color: var(--black1);
-    }
-    
-    /* Checkbox oculto que controla el estado */
-    #sidebar-toggle {
-        display: none;
-    }
-    
-    /* Sidebar */
-    .sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        height: 100vh;
-        width: 60px;
-        background-color: var(--black2);
-        transition: width 0.3s ease;
-        overflow: hidden;
-        z-index: 1000;
-        border-right: 1px solid var(--border-color);
-    }
-    
-    /* Cuando el checkbox está marcado, expandir */
-    #sidebar-toggle:checked ~ .sidebar {
-        width: 260px;
-    }
-    
-    /* Header del sidebar */
-    .sidebar-header {
-        display: flex;
-        align-items: center;
-        padding: 15px;
-        border-bottom: 1px solid #3c434a;
-        height: 60px;
-    }
-    
-    /* Label que actúa como botón */
-    .toggle-btn {
-        background: none;
-        border: none;
-        color: #f0f0f1;
-        font-size: 20px;
-        cursor: pointer;
-        padding: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 4px;
-        transition: background-color 0.2s;
-        min-width: 36px;
-    }
-    
-    .toggle-btn:hover {
-        background-color: #3c434a;
-    }
+        /* Header Superior */
+        header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 10px 30px;
+            height: 60px;
+            background-color: var(--black2);
+            border-bottom: 1px solid var(--border-color);
+        }
 
-    /* Needs fix */
-    .container {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        flex-wrap: wrap;
-        height: 300px;
-        width: auto;
-    }
-    .valor{
-        font-size: 30px;
-        display: block;
-        text-align: center;
-        margin: 0 auto;
-    }
-    
-    .logo-container {
-        display: flex;
-        align-items: center;
-        margin-left: 10px;
-        opacity: 0;
-        transition: opacity 0.3s;
-        white-space: nowrap;
-    }
-    
-    #sidebar-toggle:checked ~ .sidebar .logo-container {
-        opacity: 1;
-    }
-    
-    .logo {
-        width: 32px;
-        height: 32px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        font-size: 18px;
-    }
-    
-    .site-name {
-        margin-left: 12px;
-        color: #f0f0f1;
-        font-size: 16px;
-        font-weight: 600;
-    }
-    .status {
-        margin-left: 20px;
-        color: #f0f0f1;
-        font-size: 16px;
-        font-weight: 600;
-    }
-    
-    /* Menú de navegación */
-    .sidebar-menu {
-        list-style: none;
-        padding: 15px 0;
-    }
-    
-    .menu-item {
-        margin: 2px 0;
-    }
-    
-    .menu-link {
-        display: flex;
-        align-items: center;
-        padding: 12px 15px;
-        color: #f0f0f1;
-        text-decoration: none;
-        transition: all 0.2s;
-        position: relative;
-    }
-    
-    .menu-link:hover {
-        background-color: #3c434a;
-        color: #72afd2;
-    }
-    
-    .menu-link.active {
-        background-color: #2c3338;
-        border-left: 4px solid #2271b1;
-        color: #72afd2;
-    }
-    
-    .menu-icon {
-        min-width: 30px;
-        font-size: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .menu-text {
-        margin-left: 15px;
-        opacity: 0;
-        transition: opacity 0.3s;
-        white-space: nowrap;
-    }
-    
-    #sidebar-toggle:checked ~ .sidebar .menu-text {
-        opacity: 1;
-    }
-    
-    /* Contenido principal */
-    .main-content {
-        margin-left: 60px;
-        padding: 30px;
-        transition: margin-left 0.3s ease;
-        min-height: 100vh;
-    }
-    
-    #sidebar-toggle:checked ~ .main-content {
-        margin-left: 260px;
-    }
-    
-    /* Separador de menú */
-    .menu-separator {
-        height: 1px;
-        background-color: #3c434a;
-        margin: 10px 15px;
-    }
-    
-    /* Badge de notificaciones */
-    .badge {
-        background-color: #d63638;
-        color: white;
-        font-size: 11px;
-        padding: 2px 6px;
-        border-radius: 10px;
-        margin-left: auto;
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-        
-    .container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        padding: 20px;
-    }
-/*
-    .card {
-        border: 1px solid #ddd;
-        border-radius: 15px;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background-color: #fff;
-    }
-*/
-    .valor {
-        font-size: 2rem;
-        font-weight: bold;
-    }
+        /* Sidebar (Ancho por defecto: Abierto) */
+        aside {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background-color: var(--black2);
+            transition: width 0.3s ease;
+            overflow: hidden;
+            z-index: 1000;
+            border-right: 1px solid var(--border-color);
+        }
+
+        aside.closed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        /* Botón Hamburguesa */
+        .menu-container {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            height: 60px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--menu-icon-color);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background-color: var(--black4);
+        }
+
+        /* Menú de navegación cambiado a Flexbox */
+        .sidebar-menu {
+            list-style: none;
+            padding: 15px 0;
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 60px);
+        }
+
+        .menu-item {
+            margin: 2px 0;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .menu-link:hover {
+            background-color: var(--black4);
+            color: #72afd2;
+        }
+
+        .menu-link.active {
+            background-color: var(--black3);
+            border-left: 4px solid #2271b1;
+            color: #72afd2;
+        }
+
+        .menu-icon {
+            min-width: 30px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--menu-icon-color);
+        }
+
+        /* Ocultar texto si el sidebar está cerrado */
+        .menu-text {
+            margin-left: 15px;
+            opacity: 1;
+            transition: opacity 0.2s;
+        }
+
+        aside.closed .menu-text {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Contenido principal */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+        }
+
+        /* Ajuste del contenido cuando el sidebar se cierra */
+        aside.closed~.main-content {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        .menu-separator {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 10px 15px;
+            margin-top: auto;
+        }
+
+        /* Grid de Tarjetas */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .valor {
+            font-size: 2rem;
+            font-weight: bold;
+        }
 
         .label {
             color: var(--text-color);
@@ -254,64 +201,58 @@
         /* Ajuste Responsive Móvil */
         @media (max-width: 768px) {
             aside {
-                width: 60px;
+                width: var(--sidebar-collapsed-width);
             }
 
             aside .menu-text {
                 display: none;
             }
 
-            main {
-                margin-left: 60px;
-            }
-
-            aside.closed~main {
-                margin-left: 60px;
+            .main-content,
+            aside.closed~.main-content {
+                margin-left: var(--sidebar-collapsed-width);
             }
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <div class="right">
-            <div id="btn-theme" style="cursor: pointer; font-size: 1.2rem; color: var(--menu-icon-color);">
-                <i class="fas fa-moon"></i>
-            </div>
-        </div>
-    </header>
-
     <aside id="sidebar">
-        <div class="menu-container" id="btn-toggle">
-            <div class="menu">
+        <div class="menu-container">
+            <button class="toggle-btn" id="btn-toggle" type="button">
                 <i class="fas fa-bars"></i>
-            </div>
+            </button>
         </div>
 
         <ul class="sidebar-menu">
             <li class="menu-item">
-                <a href="{{ url_for('monitor.monitor') }}" class="menu-link {% if request.endpoint == 'monitor' %}active{% endif %}">
+                <a href="{{ url_for('monitor.monitor') }}"
+                    class="menu-link {% if request.endpoint == 'monitor.monitor' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
                     <span class="menu-text">Monitor</span>
                 </a>
+            
             </li>
             <li class="menu-item">
-                <a href="{{ url_for('monitor.process') }}" class="menu-link {% if request.endpoint == 'process' %}active{% endif %}">
+                <a href="{{ url_for('monitor.process') }}"
+                    class="menu-link {% if request.endpoint == 'monitor.process' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-tasks"></i></span>
                     <span class="menu-text">Procesos</span>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="{{ url_for('monitor.disks') }}" class="menu-link {% if request.endpoint == 'monitor.disks' %}active{% endif %}">
+                <a href="{{ url_for('monitor.disks') }}"
+                    class="menu-link {% if request.endpoint == 'monitor.disks' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-server"></i></span>
                     <span class="menu-text">Discos</span>
                 </a>
             </li>
-            
+
             <li class="menu-separator"></li>
 
             <li class="menu-item">
-                <a href="{{ url_for('monitor.settings') }}" class="menu-link {% if request.endpoint == 'settings' %}active{% endif %}">
+                <a href="{{ url_for('monitor.settings') }}"
+                    class="menu-link {% if request.endpoint == 'monitor.settings' %}active{% endif %}">
                     <span class="menu-icon"><i class="fas fa-cog"></i></span>
                     <span class="menu-text">Ajustes</span>
                 </a>
@@ -325,29 +266,37 @@
         </ul>
     </aside>
 
+    <header>
+        <div class="right">
+            <div id="btn-theme" style="cursor: pointer; font-size: 1.2rem; color: var(--menu-icon-color);">
+                <i class="fas fa-moon"></i>
+            </div>
+        </div>
+    </header>
+
     <main class="main-content">
         {% block content %}{% endblock %}
     </main>
 
     <script>
-        // COMPROBACIÓN DEL SIDEBAR: Se ejecuta de inmediato antes de pintar la web para evitar parpadeos
+        // 1. COMPROBACIÓN INMEDIATA (Evita parpadeos de blanco/negro al cargar)
         const sidebarState = localStorage.getItem('sidebar');
         const sidebar = document.getElementById('sidebar');
         if (sidebarState === 'closed') {
             sidebar.classList.add('closed');
         }
 
-        // 1. COMPROBACIÓN INICIAL: Se ejecuta de inmediato al cargar cualquier página
         const currentTheme = localStorage.getItem('theme');
-        const btnTheme = document.getElementById('btn-theme');
-
         if (currentTheme === 'light') {
             document.body.classList.add('light-theme');
         }
 
-        // Aseguramos que el icono empiece con la forma correcta según el tema guardado
+        // 2. LOGICA CUANDO EL DOM ESTÁ LISTO
         document.addEventListener("DOMContentLoaded", () => {
+            const btnTheme = document.getElementById('btn-theme');
             const icono = btnTheme.querySelector('i');
+
+            // Ajustar icono inicial del tema
             if (document.body.classList.contains('light-theme')) {
                 icono.className = 'fas fa-sun';
             } else {
@@ -358,28 +307,25 @@
             const btnToggle = document.getElementById('btn-toggle');
             btnToggle.addEventListener('click', () => {
                 sidebar.classList.toggle('closed');
-
-                // Guardar la preferencia en el localStorage
                 if (sidebar.classList.contains('closed')) {
                     localStorage.setItem('sidebar', 'closed');
                 } else {
                     localStorage.setItem('sidebar', 'opened');
                 }
             });
-        });
 
-        // 2. EL EVENTO CLICK: Guarda la elección del usuario
-        btnTheme.addEventListener('click', () => {
-            document.body.classList.toggle('light-theme');
+            // EVENTO CLICK DEL TEMA
+            btnTheme.addEventListener('click', () => {
+                document.body.classList.toggle('light-theme');
 
-            const icono = btnTheme.querySelector('i');
-            if (document.body.classList.contains('light-theme')) {
-                icono.className = 'fas fa-sun';
-                localStorage.setItem('theme', 'light'); // Guardamos modo claro
-            } else {
-                icono.className = 'fas fa-moon';
-                localStorage.setItem('theme', 'dark');  // Guardamos modo oscuro
-            }
+                if (document.body.classList.contains('light-theme')) {
+                    icono.className = 'fas fa-sun';
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    icono.className = 'fas fa-moon';
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
         });
     </script>
     {% block extra_js %}{% endblock %}

@@ -2,20 +2,18 @@
 {% block content %}
 
 <style>
-    * {
-        color: rgb(250, 250, 250);
-    }
-
     .title {
         margin-top: 20px;
         margin-bottom: 20px;
+        color: var(--text-color);
     }
 
     .global-card {
         border: 1px solid var(--border-color);
-        background-color: var(--black2);
+        background-color: var(--card-bg); 
         border-radius: 10px;
         padding: 10px;
+        transition: background-color 0.3s, border-color 0.3s;
     }
 
     .grid-row-disks {
@@ -24,6 +22,7 @@
         align-items: center;
         gap: 15px;
         padding: 10px;
+        color: var(--text-color);
     }
 
     .grid-row-partitions {
@@ -32,15 +31,17 @@
         align-items: center;
         gap: 15px;
         padding: 10px;
+        color: var(--text-color);
     }
 
     .section-title {
         font-weight: bold;
+        color: #72afd2; 
     }
 
     .separator {
         border: none;
-        border-top: 1px solid var(--black4);
+        border-top: 1px solid var(--border-color); 
         margin: 10px -10px;
     }
 
@@ -53,8 +54,16 @@
     }
 
     .progress-fill {
-        background: green;
+        background: #2ecc71; 
         height: 100%;
+    }
+
+    .loading-text {
+        padding: 20px;
+        text-align: center;
+        color: var(--text-color);
+        font-style: italic;
+        opacity: 0.7;
     }
 </style>
 
@@ -73,80 +82,49 @@
     </div>
 
     <hr class="separator">
-    <div id="devices-list">
-        <div class="grid-row-disks">
-            <div>/dev/sdb</div>
-            <div>/mnt/asadasd</div>
-            <div>2.02MB/s</div>
-            <div>67.30MB/s</div>
-            <div>Tamaño</div>
-        </div>
-        <div class="grid-row-disks">
-            <div>/dev/sdb</div>
-            <div>/asd/asdasdasd</div>
-            <div>1.11MB/s</div>
-            <div>0.09MB/s</div>
-            <div>Tamaño</div>
-        </div>
-    </div>
+    
+
 </div>
-
-
 
 <h2 class="title"><i class="fa-solid fa-chart-pie"></i> Particiones</h2>
 <div class="global-card">
     <div class="grid-row-partitions section-title">
         <div>Dispositivo</div>
         <div>Montaje</div>
-        <div style="grid-column: span 2;">Tamaño</div>
+        <div style="grid-column: span 2;">Tamaño / Uso</div>
     </div>
-
 
     <hr class="separator">
 
 
-    <div id="parts-list">
-        <div class="grid-row-partitions">
-            <div>/dev/sda</div>
-            <div>/</div>
-            <div>50MB/s</div>
-            <div>0.01MB/s</div>
-            <div>Tamaño</div>
-        </div>
-        <div class="grid-row-partitions">
-            <div>/dev/sdb</div>
-            <div>/mnt/asadasd</div>
-            <div>2.02MB/s</div>
-            <div>67.30MB/s</div>
-            <div>Tamaño</div>
-        </div>
-        <div class="grid-row-partitions">
-            <div>/dev/sdb</div>
-            <div>/asd/asdasdasd</div>
-            <div>1.11MB/s</div>
-            <div>0.09MB/s</div>
-            <div class="progress-bar-container">
-                <div class="progress-fill" style="width: 45%;"></div>
-            </div>
-            <div>2000.00Gb</div>
-        </div>
-    </div>
-
 </div>
 
-<img src="https://cdn.discordapp.com/attachments/1292887886378569788/1511086037148107053/image-asset.png?ex=6a1f2c09&is=6a1dda89&hm=106529b01fe0f0a9790146aa88a1b94284508779d838c6cb480e6e98c5f83d13&animated=true"
-    width="100px">
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    eventSource = new EventSource('/disks-stream');
+    // Conexión al stream en tiempo real
+    const eventSource = new EventSource('/disks-stream');
 
     eventSource.onmessage = function (event) {
-        const data = JSON.parse(event.data);
+        try {
+            const data = JSON.parse(event.data);
 
-        document.getElementById('parts-list').innerHTML = data.disk_parts_html;
-        document.getElementById('devices-list').innerHTML = data.disk_devices_html;
+            // Reemplaza por completo el contenido "Cargando..." con el HTML real enviado desde el servidor
+            if (data.disk_parts_html) {
+                document.getElementById('parts-list').innerHTML = data.disk_parts_html;
+            }
+            if (data.disk_devices_html) {
+                document.getElementById('devices-list').innerHTML = data.disk_devices_html;
+            }
+        } catch (error) {
+            console.error("Error al procesar los datos del disco:", error);
+        }
+    };
+
+    // Manejo de errores por si se cae la conexión con el servidor
+    eventSource.onerror = function(err) {
+        console.error("EventSource falló:", err);
     };
 </script>
 {% endblock %}
