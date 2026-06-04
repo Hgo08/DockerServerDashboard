@@ -22,12 +22,17 @@ def get_setting(key, default):
 def monitor_stream():
     app = current_app._get_current_object()
     def generar_eventos():
-        while True:
+        try:
             with app.app_context():
                 update_delay = get_setting('update_interval', 1)
+        except Exception as e:
+            update_delay = 1
+
+        while True:
             datos_actuales = datos_recursos.obtener_datos()
             yield f"data: {json.dumps(datos_actuales)}\n\n"
             time.sleep(update_delay)
+
 
     response = Response(generar_eventos(), mimetype='text/event-stream')
     response.headers['X-Accel-Buffering'] = 'no'
@@ -41,9 +46,13 @@ def monitor_stream():
 def logs_stream():
     app = current_app._get_current_object()
     def generar_eventos():
-         while True:
+        try:
             with app.app_context():
                 update_delay = get_setting('update_interval', 1)
+        except:
+            update_delay = 1
+            
+        while True:
             datos_actuales = datos_logs.obtener_datos()
             yield f"data: {json.dumps(datos_actuales)}\n\n"
             time.sleep(update_delay)
@@ -66,43 +75,47 @@ def process_stream():
 
 
     def generar_eventos():
-        with app.app_context():
-            while True:
-                with app.app_context():
-                    update_delay = get_setting('update_interval', 1)
-                #obtenemos todos los procesos desde el hilo de actualizacion
-                allProcess = datos_process.obtener_datos()
+        try:
+            with app.app_context():
+                update_delay = get_setting('update_interval', 1)
+        except Exception as e:
+            update_delay = 1
 
-                #inicializamos la lista
-                filtred = []
+        while True:
+            #obtenemos todos los procesos desde el hilo de actualizacion
+            allProcess = datos_process.obtener_datos()
+
+            #inicializamos la lista
+            filtred = []
 
 
-                for proc in allProcess:
-                    #si la busqueda empieza por #, busca concidencia exacta de PID, si no busca si contiene la busqueda en nombre
-                    if search == '' or search == '#':
+            for proc in allProcess:
+                #si la busqueda empieza por #, busca concidencia exacta de PID, si no busca si contiene la busqueda en nombre
+                if search == '' or search == '#':
+                    filtred.append(proc)
+                elif search[0] == '#':
+                    pid = str(proc.get('pid') or '')
+                    if search[1:] == pid:
                         filtred.append(proc)
-                    elif search[0] == '#':
-                        pid = str(proc.get('pid') or '')
-                        if search[1:] == pid:
-                            filtred.append(proc)
-                    else:
-                        #por cada proceso, se obtiene su nombre
-                        #(se usa 'or' para establecer un valor por defecto por si no se puede acceder a 'name' o 'pid' y asi evitar errores)
-                        nombre = str(proc.get('name') or '').lower()
-                        #si la busqueda contiene el nombre o el pid del proceso de la iteracion actual, se añade a la lista de procesos filtrados
-                        if search in nombre:
-                            filtred.append(proc)
+                else:
+                    #por cada proceso, se obtiene su nombre
+                    #(se usa 'or' para establecer un valor por defecto por si no se puede acceder a 'name' o 'pid' y asi evitar errores)
+                    nombre = str(proc.get('name') or '').lower()
+                    #si la busqueda contiene el nombre o el pid del proceso de la iteracion actual, se añade a la lista de procesos filtrados
+                    if search in nombre:
+                        filtred.append(proc)
 
-                #ordena los procesos filtrados, usando una funcion lambda para ordenarlos por la variable sort_by y que no de error si no tiene valor
-                ordered = sorted(filtred, key=lambda x: x.get(sort_by) if x.get(sort_by) is not None else 0, reverse=inverted)
+            #ordena los procesos filtrados, usando una funcion lambda para ordenarlos por la variable sort_by y que no de error si no tiene valor
+            ordered = sorted(filtred, key=lambda x: x.get(sort_by) if x.get(sort_by) is not None else 0, reverse=inverted)
 
-                #genera el html de los procesos desde un template pasando como variable la lista de todos los porcesos (limitado a 30)
+            #genera el html de los procesos desde un template pasando como variable la lista de todos los porcesos (limitado a 30)
+            with app.app_context():
                 html = render_template('partials/process.html', procesos=ordered[:30])
-                html_limpio = html.replace('\n', '').replace('\r', '')
+            html_limpio = html.replace('\n', '').replace('\r', '')
 
 
-                yield f"data: {html_limpio}\n\n"
-                time.sleep(update_delay)
+            yield f"data: {html_limpio}\n\n"
+            time.sleep(update_delay)
 
     return Response(generar_eventos(), mimetype='text/event-stream')
 
@@ -112,27 +125,30 @@ def process_stream():
 def disks_stream():
     app = current_app._get_current_object()
     def generar_eventos():
-        with app.app_context():
-            while True:
-                with app.app_context():
-                    update_delay = get_setting('update_interval', 1)
+        try:
+            with app.app_context():
+                update_delay = get_setting('update_interval', 1)
+        except Exception as e:
+            update_delay = 1
 
-                #obtenemos todos los discos desde el hilo de actualizacion
-                disksData = datos_disks.obtener_datos()
+        while True:
+            #obtenemos todos los discos desde el hilo de actualizacion
+            disksData = datos_disks.obtener_datos()
 
-                #genera el html de los discos desde un template pasando como variable la lista de todos los discos
+            #genera el html de los discos desde un template pasando como variable la lista de todos los discos
+            with app.app_context():
                 html = render_template('partials/disk_parts.html', disks=disksData['partitions'])
-                disk_parts_clean = html.replace('\n', '').replace('\r', '')
-
+            disk_parts_clean = html.replace('\n', '').replace('\r', '')
+            with app.app_context():
                 html = render_template('partials/disk_devices.html', disks=disksData['devices'])
-                disk_devices_clean = html.replace('\n', '').replace('\r', '')
+            disk_devices_clean = html.replace('\n', '').replace('\r', '')
 
-                data = {
-                    "disk_parts_html": disk_parts_clean,
-                    "disk_devices_html": disk_devices_clean
-                }
+            data = {
+                "disk_parts_html": disk_parts_clean,
+                "disk_devices_html": disk_devices_clean
+            }
 
-                yield f"data: {json.dumps(data)}\n\n"
-                time.sleep(update_delay)
+            yield f"data: {json.dumps(data)}\n\n"
+            time.sleep(update_delay)
 
     return Response(generar_eventos(), mimetype='text/event-stream')
