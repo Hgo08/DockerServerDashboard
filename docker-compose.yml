@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    container_name: app-python
+    container_name: DockerServerDashboard
     restart: always
     network_mode: host
     pid: host
