@@ -105,7 +105,7 @@
 
 {% block extra_js %}
 <script>
-    eventSource = new EventSource('/disks-stream');
+    eventSource = new EventSource('disks-stream');
 
     eventSource.onmessage = function (event) {
         const data = JSON.parse(event.data);

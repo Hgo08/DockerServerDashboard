@@ -117,7 +117,11 @@ def process_stream():
             yield f"data: {html_limpio}\n\n"
             time.sleep(update_delay)
 
-    return Response(generar_eventos(), mimetype='text/event-stream')
+    response = Response(generar_eventos(), mimetype='text/event-stream')
+    response.headers['X-Accel-Buffering'] = 'no'
+    response.headers['Cache-Control'] = 'no-cache'
+    response.headers['Connection'] = 'keep-alive'
+    return response
 
 
 @streams_bp.route('/disks-stream')
@@ -151,4 +155,8 @@ def disks_stream():
             yield f"data: {json.dumps(data)}\n\n"
             time.sleep(update_delay)
 
-    return Response(generar_eventos(), mimetype='text/event-stream')
+    response = Response(generar_eventos(), mimetype='text/event-stream')
+    response.headers['X-Accel-Buffering'] = 'no'
+    response.headers['Cache-Control'] = 'no-cache'
+    response.headers['Connection'] = 'keep-alive'
+    return response

@@ -140,7 +140,7 @@
 
         const searchTerm = document.getElementById('search').value;
         // Construir URL con parámetros para Python
-        const url = `/process-stream?search=${encodeURIComponent(searchTerm)}&sort=${currentSort}&inverted=${inverted}`;
+        const url = `process-stream?search=${encodeURIComponent(searchTerm)}&sort=${currentSort}&inverted=${inverted}`;
         
         eventSource = new EventSource(url);
 
@@ -192,12 +192,6 @@
 
     // Conexión inicial
     conectarSSE();
-
-    function matarProceso(pid) {
-        if(confirm(`¿Deseas finalizar el proceso ${pid}?`)) {
-            fetch(`/kill/${pid}`, { method: 'POST' });
-        }
-    }
 </script>
 
 {% endblock %}
