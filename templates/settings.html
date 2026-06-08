@@ -159,10 +159,10 @@
             <div class="setting-row">
                 <div class="setting-info">
                     <span class="setting-label">Unidades de tamaño de discos</span>
-                    <span class="setting-description">Mostrar el tamaño de los discos en GiB (Gigibytes) o GB (Gigabytes)</span>
+                    <span class="setting-description">Mostrar el tamaño de los discos en GiB (Gibibytes) o GB (Gigabytes)</span>
                 </div>
                 <select name="disk_units" class="custom-select">
-                    <option value="GiB" {% if settings.disk_units == 'GiB' %}selected{% endif %}>Gigibytes (GiB)</option>
+                    <option value="GiB" {% if settings.disk_units == 'GiB' %}selected{% endif %}>Gibibytes (GiB)</option>
                     <option value="GB" {% if settings.disk_units == 'GB' %}selected{% endif %}>Gigabytes (GB)</option>
                 </select>
             </div>
@@ -180,7 +180,7 @@
             
             <div class="setting-row">
                 <div class="setting-info">
-                    <span class="setting-label">Oculatar procesos del sistema</span>
+                    <span class="setting-label">Ocultar procesos del sistema</span>
                     <span class="setting-description">Ocultar los procesos del sistema como kworker o systemd</span>
                 </div>
                 <label class="switch">
